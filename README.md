@@ -1,91 +1,137 @@
-# react-native-alarm-notification
-schedule alarm with notification in react-native
+# React Native Alarm Notification
 
-# Project Title
+React Native Alarm Notification for Android
 
-One Paragraph of project description goes here
+**NOTE: The iOS side of this module will be included when i have figured it out.**
 
-## Getting Started
+## Installation
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+`npm install --save react-native-alarm-notification`
 
-### Prerequisites
+`react-native link react-native-alarm-notification`
 
-What things you need to install the software and how to install them
+**NOTE: For Android, you will still have to manually update the AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
 
-```
-Give examples
-```
+## Android manual Installation
 
-### Installing
+In your `AndroidManifest.xml`
+```xml
+    .....
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+    <application ....>
+        <service android:name="com.emekalites.react.alarm.notification.ANService" android:enabled="true"/>
+        <receiver android:name="com.emekalites.react.alarm.notification.ANAlarmReceiver" android:enabled="true"/>
+        <receiver android:name="com.emekalites.react.alarm.notification.ANBootReceiver" android:enabled="true" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+     .....
 
 ```
-Give an example
+
+In `android/settings.gradle`
+```gradle
+...
+
+include ':react-native-alarm-notification'
+project(':react-native-alarm-notification').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-alarm-notification/android')
 ```
 
-### And coding style tests
+Manually register module in `MainApplication.java` (if you did not use `react-native link`):
 
-Explain what these tests test and why
+```java
+import com.emekalites.react.alarm.notification.ANPackage;  // <--- Import Package
 
+public class MainApplication extends Application implements ReactApplication {
+
+  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+      @Override
+      protected boolean getUseDeveloperSupport() {
+        return BuildConfig.DEBUG;
+      }
+
+      @Override
+      protected List<ReactPackage> getPackages() {
+      	return Arrays.<ReactPackage>asList(
+			new MainReactPackage(),
+			new ANPackage() // <---- Add the Package
+		);
+	  }
+  };
+
+  ....
+}
 ```
-Give an example
+
+## Usage
+
+```javascript
+import ReactNativeAN from 'react-native-alarm-notification';
+const alarmNotifData = {
+	id: "UNIQ_ID_STRING",                         // (optional for ReactNativeAN.sendNotification)
+	title: "My Notification Title",               // Required
+	message: "My Notification Message",           // Required
+	ticker: "My Notification Ticker",                   
+	auto_cancel: true,                            // default: true
+	vibrate: true,                                      
+	vibration: 100,                               // default: 100, no vibration if vibrate: false
+	small_icon: "ic_launcher",                    // Required
+	large_icon: "ic_launcher",                          
+	play_sound: true,                                    
+	sound_name: null,                             // Plays custom alarm/notification ringtone if sound_name: null
+	color: "red",                                       
+	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
+	tag: 'some_tag',                                    
+	fire_date: new Date().getTime()				  // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm
+};
+
+class App extends Component {
+	...
+
+    method(){
+		//Schedule Future Alarm
+        ReactNativeAN.scheduleAlarm(alarmNotifData);
+
+		//Delete Scheduled Alarm
+        ReactNativeAN.deleteAlarm("UNIQUE_ID_STRING");
+
+		//Send Local Notification Now
+        ReactNativeAN.sendNotification(alarmNotifData);
+
+		//Get All Scheduled Alarms
+        FCM.getScheduledAlarms().then(alarmNotif=>console.log(alarmNotif));
+
+        //Clear Notification(s) From Notification Center/Tray
+        FCM.removeAllFiredNotifications()
+        FCM.removeFiredNotification("UNIQUE_ID_STRING")
+
+        //Removes Future Local Notifications
+        FCM.cancelAllNotifications()
+        FCM.cancelNotification("UNIQUE_ID_STRING")
+    }
+
+	...
+}
 ```
 
-## Deployment
+## Custom sounds
 
-Add additional notes about how to deploy this on a live system
+In android, add your custom sound file to `[project_root]/android/app/src/main/res/raw`
 
-## Built With
+In the location notification json specify the full file name:
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+    sound_name: 'my_sound.mp3'
 
-## Contributing
+## Some features are missing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+This module is customized to help with scheduling alarms and notifications (local) in react-native. A couple of helpful features may be missing but hopefully they can be added as time goes on.
 
-## Versioning
+#### Credits
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
-
+NOTE: If you need a react-native module that takes care of Firebase Cloud Messaging, you could try [https://github.com/evollu/react-native-fcm](https://github.com/evollu/react-native-fcm)

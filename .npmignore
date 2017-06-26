@@ -1,3 +1,20 @@
-node_modules
-build
+# Logs
+logs
+*.log
+npm-debug.log*
 
+# folders
+alarm-notification
+node_modules
+android/build
+android/build/*
+android/app/build
+android/app/libs
+android/app/build/*
+android/.idea
+android/.idea/*
+android/.gradle
+android/.gradle/*
+android/local.properties
+
+release.js

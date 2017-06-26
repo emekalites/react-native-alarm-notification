@@ -1,0 +1,10 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# folders
+alarm-notification
+node_modules
+
+release.js

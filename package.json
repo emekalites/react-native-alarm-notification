@@ -1,16 +1,27 @@
 {
-  "name": "react-native-alarm-notification",
-  "version": "1.0.0",
-  "description": "schedule alarm with notification in react-native",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github:emekalites/react-native-alarm-notification.git"
-  },
-  "keywords": [],
-  "author": "Chukwuemeka Ihedoro <caihedoro@gmail.com>",
-  "license": "MIT"
+	"name": "react-native-alarm-notification",
+	"version": "1.0.0",
+	"description": "schedule alarm with notification in react-native",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"bugs": {
+		"url": "https://github.com/emekalites/react-native-alarm-notification/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github:emekalites/react-native-alarm-notification.git"
+	},
+	"keywords": [
+		"react-native",
+		"android",
+		"alarm",
+		"notification"
+	],
+	"author": "Chukwuemeka Ihedoro <caihedoro@gmail.com>",
+	"license": "MIT",
+	"peerDependencies": {
+		"react-native": "*"
+	}
 }
