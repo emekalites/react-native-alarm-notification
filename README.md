@@ -101,10 +101,10 @@ class App extends Component {
         //Delete Scheduled Alarm
         ReactNativeAN.deleteAlarm("UNIQUE_ID_STRING");
 
-		//Send Local Notification Now
+        //Send Local Notification Now
         ReactNativeAN.sendNotification(alarmNotifData);
 
-		//Get All Scheduled Alarms
+        //Get All Scheduled Alarms
         FCM.getScheduledAlarms().then(alarmNotif=>console.log(alarmNotif));
 
         //Clear Notification(s) From Notification Center/Tray
