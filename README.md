@@ -95,10 +95,10 @@ class App extends Component {
 	...
 
     method(){
-		//Schedule Future Alarm
+        //Schedule Future Alarm
         ReactNativeAN.scheduleAlarm(alarmNotifData);
 
-		//Delete Scheduled Alarm
+        //Delete Scheduled Alarm
         ReactNativeAN.deleteAlarm("UNIQUE_ID_STRING");
 
 		//Send Local Notification Now
@@ -131,7 +131,5 @@ In the location notification json specify the full file name:
 ## Some features are missing
 
 This module is customized to help with scheduling alarms and notifications (local) in react-native. A couple of helpful features may be missing but hopefully they can be added as time goes on.
-
-#### Credits
 
 NOTE: If you need a react-native module that takes care of Firebase Cloud Messaging, you could try [https://github.com/evollu/react-native-fcm](https://github.com/evollu/react-native-fcm)
