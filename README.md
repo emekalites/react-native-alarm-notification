@@ -84,7 +84,7 @@ const alarmNotifData = {
 	small_icon: "ic_launcher",                    // Required
 	large_icon: "ic_launcher",                          
 	play_sound: true,                                    
-	sound_name: null,                             // Plays custom alarm/notification ringtone if sound_name: null
+	sound_name: null,                             // Plays custom notification ringtone if sound_name: null
 	color: "red",                                       
 	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
 	tag: 'some_tag',                                    
@@ -130,6 +130,6 @@ In the location notification json specify the full file name:
 
 ## Some features are missing
 
-This module is customized to help with scheduling alarms and notifications (local) in react-native. A couple of helpful features may be missing but hopefully they can be added as time goes on.
+This module is customized to help with scheduling and sending notifications (local) in react-native. A couple of helpful features may be missing but hopefully they can be added as time goes on.
 
 NOTE: If you need a react-native module that takes care of Firebase Cloud Messaging, you could try [https://github.com/evollu/react-native-fcm](https://github.com/evollu/react-native-fcm)
