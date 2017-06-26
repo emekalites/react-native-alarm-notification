@@ -1,4 +1,6 @@
 # React Native Alarm Notification
+[![npm version](https://badge.fury.io/js/react-native-alarm-notification.svg)](https://badge.fury.io/js/react-native-alarm-notification)
+[![npm downloads](https://img.shields.io/npm/dt/react-native-alarm-notification.svg)](https://badge.fury.io/js/react-native-alarm-notification)
 
 React Native Alarm Notification for Android
 
