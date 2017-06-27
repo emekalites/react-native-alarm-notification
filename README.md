@@ -19,7 +19,8 @@ React Native Alarm Notification for Android
 In your `AndroidManifest.xml`
 ```xml
     .....
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+	<uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -76,7 +77,7 @@ public class MainApplication extends Application implements ReactApplication {
 ```javascript
 import ReactNativeAN from 'react-native-alarm-notification';
 const alarmNotifData = {
-	id: "UNIQ_ID_STRING",                         // (optional for ReactNativeAN.sendNotification)
+	id: "12345",                                  // (optional for ReactNativeAN.sendNotification)
 	title: "My Notification Title",               // Required
 	message: "My Notification Message",           // Required
 	ticker: "My Notification Ticker",                   
@@ -90,7 +91,7 @@ const alarmNotifData = {
 	color: "red",                                       
 	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
 	tag: 'some_tag',                                    
-	fire_date: new Date().getTime()	              // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm
+	fire_date: new Date().getTime()               // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm
 };
 
 class App extends Component {
@@ -101,21 +102,21 @@ class App extends Component {
         ReactNativeAN.scheduleAlarm(alarmNotifData);
 
         //Delete Scheduled Alarm
-        ReactNativeAN.deleteAlarm("UNIQUE_ID_STRING");
+        ReactNativeAN.deleteAlarm("12345");
 
         //Send Local Notification Now
         ReactNativeAN.sendNotification(alarmNotifData);
 
         //Get All Scheduled Alarms
-        FCM.getScheduledAlarms().then(alarmNotif=>console.log(alarmNotif));
+        ReactNativeAN.getScheduledAlarms().then(alarmNotif=>console.log(alarmNotif));
 
         //Clear Notification(s) From Notification Center/Tray
-        FCM.removeAllFiredNotifications()
-        FCM.removeFiredNotification("UNIQUE_ID_STRING")
+        ReactNativeAN.removeAllFiredNotifications()
+        ReactNativeAN.removeFiredNotification("12345")
 
         //Removes Future Local Notifications
-        FCM.cancelAllNotifications()
-        FCM.cancelNotification("UNIQUE_ID_STRING")
+        ReactNativeAN.cancelAllNotifications()
+        ReactNativeAN.cancelNotification("12345")
     }
 
 	...
