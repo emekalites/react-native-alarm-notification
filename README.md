@@ -91,7 +91,7 @@ const alarmNotifData = {
 	color: "red",                                       
 	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
 	tag: 'some_tag',                                    
-	fire_date: new Date().getTime()               // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm
+	fire_date: "01-01-1976 00:00:00"              // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm. Format: dd-MM-yyyy HH:mm:ss
 };
 
 class App extends Component {
