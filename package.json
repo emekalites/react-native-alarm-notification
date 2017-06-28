@@ -20,8 +20,5 @@
     "notification"
   ],
   "author": "Chukwuemeka Ihedoro <caihedoro@gmail.com>",
-  "license": "MIT",
-  "peerDependencies": {
-    "react-native": "*"
-  }
+  "license": "MIT"
 }
