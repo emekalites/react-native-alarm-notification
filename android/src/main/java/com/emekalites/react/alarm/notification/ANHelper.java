@@ -17,6 +17,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -27,8 +28,10 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by emnity on 6/25/17.
@@ -243,20 +246,16 @@ public class ANHelper {
             Log.e(TAG, "failed to schedule notification because fire date is missing");
             return;
         }
-        Log.e(TAG, fireDate);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
-        Date date = null;
-        Long fd = null;
-        try {
-            date = sdf.parse(fireDate);
-            fd = date.getTime();
-        } catch (ParseException e){
-            e.printStackTrace();
-            return;
-        } catch (Exception e){
-            e.printStackTrace();
-            return;
-        }
+        String[] output = fireDate.split("\\s+");
+        String[] date = output[0].split("\\-");
+        String[] time = output[1].split("\\:");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getDefault());
+        calendar.set(Integer.parseInt(date[2]), Integer.parseInt(date[1])-1, Integer.parseInt(date[0]), Integer.parseInt(time[0]), Integer.parseInt(time[1]), Integer.parseInt(time[2]));
+        calendar.set(Calendar.MILLISECOND, 0);
+        Long fd = calendar.getTimeInMillis();
+        Log.e(TAG, ""+calendar.getTime());
 
         Intent intent = new Intent(mContext, ANAlarmReceiver.class);
         intent.putExtras(bundle);
