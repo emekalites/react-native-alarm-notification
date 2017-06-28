@@ -24,6 +24,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -237,12 +238,25 @@ public class ANHelper {
             return;
         }
 
-        Long fireDate = Math.round(bundle.getDouble("fire_date"));
-        if (fireDate == 0) {
+        String fireDate = bundle.getString("fire_date");
+        if (fireDate == null) {
             Log.e(TAG, "failed to schedule notification because fire date is missing");
             return;
         }
-        Log.e(TAG, new SimpleDateFormat("dd-MM-yyyy HH:mm:ss z", Locale.ENGLISH).format(new Date(fireDate)));
+        Log.e(TAG, fireDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
+        Date date = null;
+        Long fd = null;
+        try {
+            date = sdf.parse(fireDate);
+            fd = date.getTime();
+        } catch (ParseException e){
+            e.printStackTrace();
+            return;
+        } catch (Exception e){
+            e.printStackTrace();
+            return;
+        }
 
         Intent intent = new Intent(mContext, ANAlarmReceiver.class);
         intent.putExtras(bundle);
@@ -250,9 +264,9 @@ public class ANHelper {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, notificationID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+            getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fd, pendingIntent);
         }else {
-            getAlarmManager().set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+            getAlarmManager().set(AlarmManager.RTC_WAKEUP, fd, pendingIntent);
         }
 
         //store intent
