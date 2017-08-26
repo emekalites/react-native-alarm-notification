@@ -17,7 +17,6 @@ ReactNativeAN.deleteAlarm = (notificationID) => {
 };
 
 ReactNativeAN.sendNotification = (details) => {
-	details.id = details.id || new Date().getTime().toString();
 	RNAlarmNotification.sendNotification(details);
 };
 

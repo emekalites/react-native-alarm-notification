@@ -77,7 +77,7 @@ public class MainApplication extends Application implements ReactApplication {
 ```javascript
 import ReactNativeAN from 'react-native-alarm-notification';
 const alarmNotifData = {
-	id: "12345",                                  // (optional for ReactNativeAN.sendNotification)
+	id: "12345",                                  // Required
 	title: "My Notification Title",               // Required
 	message: "My Notification Message",           // Required
 	ticker: "My Notification Ticker",                   

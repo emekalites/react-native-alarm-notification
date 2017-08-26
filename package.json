@@ -20,5 +20,6 @@
     "notification"
   ],
   "author": "Chukwuemeka Ihedoro <caihedoro@gmail.com>",
+  "homepage": "https://github.com/emekalites/react-native-alarm-notification",
   "license": "MIT"
 }
