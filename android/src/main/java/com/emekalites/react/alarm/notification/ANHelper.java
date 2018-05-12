@@ -35,7 +35,7 @@ import java.util.Locale;
  */
 
 public class ANHelper {
-    private static final long DEFAULT_VIBRATION = 1000;
+    private static final long DEFAULT_VIBRATION = 100;
     private static final String TAG = ANHelper.class.getSimpleName();
     private final static String PREFERENCES_KEY = "ReactNativeAlarmNotification";
     private Context mContext;
