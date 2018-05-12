@@ -24,20 +24,23 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by emnity on 6/25/17.
  */
 
 public class ANHelper {
-    private static final long DEFAULT_VIBRATION = 100;
+    private static final long DEFAULT_VIBRATION = 1000;
     private static final String TAG = ANHelper.class.getSimpleName();
     private final static String PREFERENCES_KEY = "ReactNativeAlarmNotification";
     private Context mContext;
     private SharedPreferences sharedPreferences = null;
+    private static Ringtone ringtone;
 
     public ANHelper(Application context) {
         mContext = context;
@@ -76,6 +79,10 @@ public class ANHelper {
         return alert;
     }
 
+    public int getRandomNumber(int min, int max) {
+        return (int) Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
     /*
     *  Send notification after alarm rings and remove it from re-scheduling
     */
@@ -97,8 +104,7 @@ public class ANHelper {
             // notification id
             String notificationIdString = bundle.getString("id");
             if (notificationIdString == null) {
-                Log.e(TAG, "No notification ID specified for the notification");
-                return;
+                notificationIdString = String.valueOf(getRandomNumber(1000, 9999)); // quick fix
             }
             int notificationID = Integer.parseInt(notificationIdString);
 
@@ -200,12 +206,15 @@ public class ANHelper {
                     }
                 }
                 try {
-                    Ringtone ringtone = RingtoneManager.getRingtone(mContext, soundUri);
+                    ringtone = RingtoneManager.getRingtone(mContext, soundUri);
                     ringtone.play();
                 } catch (Exception e){
                     Log.e(TAG, "failed to play ringtone", e);
                 }
             }
+
+            // cancel alarm
+            cancelAlarm(notificationIdString);
 
             //clear out one time scheduled notification once fired
             if(bundle.containsKey("schedule_once") && bundle.getBoolean("schedule_once")) {
@@ -232,8 +241,7 @@ public class ANHelper {
 
         String notificationIdString = bundle.getString("id");
         if(notificationIdString == null){
-            Log.e(TAG, "failed to schedule notification because id is missing");
-            return;
+            notificationIdString = String.valueOf(getRandomNumber(1000, 9999)); // quick fix
         }
 
         String fireDate = bundle.getString("fire_date");
@@ -241,22 +249,27 @@ public class ANHelper {
             Log.e(TAG, "failed to schedule notification because fire date is missing");
             return;
         }
-        String[] output = fireDate.split("\\s+");
-        String[] date = output[0].split("\\-");
-        String[] time = output[1].split("\\:");
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeZone(TimeZone.getDefault());
-        calendar.set(Integer.parseInt(date[2]), Integer.parseInt(date[1])-1, Integer.parseInt(date[0]), Integer.parseInt(time[0]), Integer.parseInt(time[1]), Integer.parseInt(time[2]));
-        calendar.set(Calendar.MILLISECOND, 0);
-        Long fd = calendar.getTimeInMillis();
-        Log.e(TAG, ""+calendar.getTime());
+        Log.e(TAG, fireDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
+        Date date = null;
+        Long fd = null;
+        try {
+            date = sdf.parse(fireDate);
+            fd = date.getTime();
+        } catch (ParseException e){
+            e.printStackTrace();
+            return;
+        } catch (Exception e){
+            e.printStackTrace();
+            return;
+        }
 
         Intent intent = new Intent(mContext, ANAlarmReceiver.class);
         intent.putExtras(bundle);
         int notificationID = Integer.parseInt(notificationIdString);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, notificationID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Log.e(TAG, "fd: "+fd);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             getAlarmManager().setExact(AlarmManager.RTC_WAKEUP, fd, pendingIntent);
         }else {
@@ -319,5 +332,17 @@ public class ANHelper {
             }
         }
         return array;
+    }
+
+    /*
+    *  Stop alarm sound
+    */
+    public void stopAlarm() {
+        try {
+            ringtone.stop();
+        } catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "ringtone: "+ e.getMessage());
+        }
     }
 }

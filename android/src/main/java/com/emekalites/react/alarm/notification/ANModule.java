@@ -43,6 +43,11 @@ public class ANModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void stopAlarm() {
+        anHelper.stopAlarm();
+    }
+
+    @ReactMethod
     public void sendNotification(ReadableMap details) {
         Bundle bundle = Arguments.toBundle(details);
         anHelper.sendNotification(bundle);

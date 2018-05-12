@@ -46,6 +46,17 @@ include ':react-native-alarm-notification'
 project(':react-native-alarm-notification').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-alarm-notification/android')
 ```
 
+In `app/build.gradle`
+```gradle
+dependencies {
+    compile project(':react-native-alarm-notification')  // <--- add project
+    ...
+    compile fileTree(dir: "libs", include: ["*.jar"])
+    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.facebook.react:react-native:+"  // From node_modules
+}
+```
+
 Manually register module in `MainApplication.java` (if you did not use `react-native link`):
 
 ```java
@@ -103,6 +114,9 @@ class App extends Component {
 
         //Delete Scheduled Alarm
         ReactNativeAN.deleteAlarm("12345");
+
+        //Stop Alarm
+        ReactNativeAN.stopAlarm();
 
         //Send Local Notification Now
         ReactNativeAN.sendNotification(alarmNotifData);
