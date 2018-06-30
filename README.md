@@ -1,4 +1,5 @@
 # React Native Alarm Notification
+
 [![npm version](https://badge.fury.io/js/react-native-alarm-notification.svg)](https://badge.fury.io/js/react-native-alarm-notification)
 [![npm downloads](https://img.shields.io/npm/dt/react-native-alarm-notification.svg)](https://badge.fury.io/js/react-native-alarm-notification)
 
@@ -17,6 +18,7 @@ React Native Alarm Notification for Android
 ## Android manual Installation
 
 In your `AndroidManifest.xml`
+
 ```xml
     .....
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -35,10 +37,10 @@ In your `AndroidManifest.xml`
             </intent-filter>
         </receiver>
      .....
-
 ```
 
 In `android/settings.gradle`
+
 ```gradle
 ...
 
@@ -47,6 +49,7 @@ project(':react-native-alarm-notification').projectDir = new File(rootProject.pr
 ```
 
 In `app/build.gradle`
+
 ```gradle
 dependencies {
     compile project(':react-native-alarm-notification')  // <--- add project
@@ -87,22 +90,23 @@ public class MainApplication extends Application implements ReactApplication {
 
 ```javascript
 import ReactNativeAN from 'react-native-alarm-notification';
+const fireDate = new Date(Date.now() + 1000)      // set the fire date for 1 second from now
 const alarmNotifData = {
 	id: "12345",                                  // Required
 	title: "My Notification Title",               // Required
 	message: "My Notification Message",           // Required
-	ticker: "My Notification Ticker",                   
+	ticker: "My Notification Ticker",
 	auto_cancel: true,                            // default: true
-	vibrate: true,                                      
+	vibrate: true,
 	vibration: 100,                               // default: 100, no vibration if vibrate: false
 	small_icon: "ic_launcher",                    // Required
-	large_icon: "ic_launcher",                          
-	play_sound: true,                                    
+	large_icon: "ic_launcher",
+	play_sound: true,
 	sound_name: null,                             // Plays custom notification ringtone if sound_name: null
-	color: "red",                                       
+	color: "red",
 	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
-	tag: 'some_tag',                                    
-	fire_date: "01-01-1976 00:00:00"              // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm. Format: dd-MM-yyyy HH:mm:ss
+	tag: 'some_tag',
+	fire_date: ReactNativeAN.parseDate(fireDate)  // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm. Format: dd-MM-yyyy HH:mm:ss
 };
 
 class App extends Component {
