@@ -66,7 +66,6 @@ ReactNativeAN.parseDate = (rawDate) => {
 	} else {
 		day = `${rawDate.getDate()}`;
 	}
-	console.log(rawDate.getMonth());
 
 	if (rawDate.getMonth().toString().length === 1) {
 		month = `0${rawDate.getMonth() + 1}`;

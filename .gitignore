@@ -67,7 +67,4 @@ npm-debug.*
 logs
 *.log
 
-# folders
-alarm-notification
-
 release.js

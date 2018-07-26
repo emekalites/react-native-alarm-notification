@@ -90,7 +90,10 @@ public class MainApplication extends Application implements ReactApplication {
 
 ```javascript
 import ReactNativeAN from 'react-native-alarm-notification';
-const fireDate = new Date(Date.now() + 1000)      // set the fire date for 1 second from now
+const fireDate = ReactNativeAN.parseDate(new Date(Date.now() + 1000));     // set the fire date for 1 second from now
+or
+const fireDate = '01-01-1976 00:00:00';			  // set exact date time | 'day-month-year hour(s)-minute(s)-second(s)'
+
 const alarmNotifData = {
 	id: "12345",                                  // Required
 	title: "My Notification Title",               // Required
@@ -106,7 +109,7 @@ const alarmNotifData = {
 	color: "red",
 	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
 	tag: 'some_tag',
-	fire_date: ReactNativeAN.parseDate(fireDate)  // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm. Format: dd-MM-yyyy HH:mm:ss
+	fire_date: fireDate	 	 					  // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm. Format: dd-MM-yyyy HH:mm:ss
 };
 
 class App extends Component {
