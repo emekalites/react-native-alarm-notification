@@ -152,6 +152,8 @@ In the location notification json specify the full file name:
 
     sound_name: 'my_sound.mp3'
 
+or check this issue if it'll help [https://github.com/emekalites/react-native-alarm-notification/issues/3](https://github.com/emekalites/react-native-alarm-notification/issues/3)
+
 ## Some features are missing
 
 This module is customized to help with scheduling and sending notifications (local) in react-native. A couple of helpful features may be missing but hopefully they can be added as time goes on.
