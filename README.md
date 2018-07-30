@@ -55,7 +55,7 @@ dependencies {
     compile project(':react-native-alarm-notification')  // <--- add project
     ...
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.android.support:appcompat-v7:26.1.0" // <--- minimum support library version
     compile "com.facebook.react:react-native:+"  // From node_modules
 }
 ```
@@ -86,6 +86,50 @@ public class MainApplication extends Application implements ReactApplication {
 }
 ```
 
+Register your channel e.g. in `onCreate()`
+
+```java
+public class MainApplication extends Application implements ReactApplication {
+
+  ...
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+
+    ...
+
+    // The id of the channel.
+    String id = "my_channel_id";
+    // The user-visible name of the channel.
+    CharSequence name = "my_channel_name";
+
+    // The user-visible description of the channel.
+    String description = "my_channel_description";
+
+    int importance = 0;
+    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      importance = NotificationManager.IMPORTANCE_LOW;
+
+      NotificationChannel mChannel = new NotificationChannel(id, name, importance);
+
+      // Configure the notification channel.
+      mChannel.setDescription(description);
+
+      mChannel.enableLights(true);
+      // Sets the notification light color for notifications posted to this
+      // channel, if the device supports this feature.
+      mChannel.setLightColor(Color.RED);
+
+      mChannel.enableVibration(true);
+      mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+
+      mNotificationManager.createNotificationChannel(mChannel);
+    }
+  }
+}
+```
+
 ## Usage
 
 ```javascript
@@ -98,6 +142,7 @@ const alarmNotifData = {
 	id: "12345",                                  // Required
 	title: "My Notification Title",               // Required
 	message: "My Notification Message",           // Required
+	channel: "my_channel_id",                     // Required. Same id as specified in MainApplication's onCreate method
 	ticker: "My Notification Ticker",
 	auto_cancel: true,                            // default: true
 	vibrate: true,
@@ -109,7 +154,7 @@ const alarmNotifData = {
 	color: "red",
 	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
 	tag: 'some_tag',
-	fire_date: fireDate                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm. 
+	fire_date: fireDate                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
 };
 
 class App extends Component {

@@ -114,6 +114,13 @@ public class ANHelper {
                 return;
             }
 
+            // channel id
+            String channelString = bundle.getString("channel");
+            if (channelString == null) {
+                Log.d(TAG, "Cannot send to notification centre because there is no 'channel' field in: " + bundle);
+                return;
+            }
+
             Resources res = mContext.getResources();
             String packageName = mContext.getPackageName();
 
@@ -133,7 +140,7 @@ public class ANHelper {
             PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext, notificationID, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(mContext)
+                    new NotificationCompat.Builder(mContext, channelString)
                             .setSmallIcon(smallIconResId)
                             .setContentTitle(title)
                             .setTicker(bundle.getString("ticker"))
