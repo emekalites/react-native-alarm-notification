@@ -89,6 +89,15 @@ public class MainApplication extends Application implements ReactApplication {
 Register your channel e.g. in `onCreate()`
 
 ```java
+
+...
+import android.app.NotificationManager;
+import android.app.NotificationChannel;
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
+...
+
 public class MainApplication extends Application implements ReactApplication {
 
   ...
@@ -99,32 +108,26 @@ public class MainApplication extends Application implements ReactApplication {
 
     ...
 
-    // The id of the channel.
-    String id = "my_channel_id";
-    // The user-visible name of the channel.
-    CharSequence name = "my_channel_name";
+    String id = "my_channel_id";					// The id of the channel.
+    CharSequence name = "my_channel_name";			// The user-visible name of the channel.
+    String description = "my_channel_description";	// The user-visible description of the channel.
 
-    // The user-visible description of the channel.
-    String description = "my_channel_description";
-
-    int importance = 0;
     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      importance = NotificationManager.IMPORTANCE_LOW;
-
-      NotificationChannel mChannel = new NotificationChannel(id, name, importance);
-
-      // Configure the notification channel.
+      NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT);
+ 
+      // Configure the notification channel. 
       mChannel.setDescription(description);
-
+ 
       mChannel.enableLights(true);
       // Sets the notification light color for notifications posted to this
-      // channel, if the device supports this feature.
+      // channel, if the device supports this feature. 
       mChannel.setLightColor(Color.RED);
-
+ 
       mChannel.enableVibration(true);
       mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-
-      mNotificationManager.createNotificationChannel(mChannel);
+ 
+      NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+	  mNotificationManager.createNotificationChannel(mChannel);
     }
   }
 }

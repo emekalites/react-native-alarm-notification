@@ -106,7 +106,14 @@ public class ANHelper {
             if (notificationIdString == null) {
                 notificationIdString = String.valueOf(getRandomNumber(1000, 9999)); // quick fix
             }
-            int notificationID = Integer.parseInt(notificationIdString);
+
+            int notificationID;
+            try {
+                notificationID = Integer.parseInt(notificationIdString);
+            } catch (Exception e){
+                notificationIdString = String.valueOf(getRandomNumber(1000, 9999));
+                notificationID = Integer.parseInt(notificationIdString);
+            }
 
             // message
             if (bundle.getString("message") == null) {
@@ -273,7 +280,15 @@ public class ANHelper {
 
         Intent intent = new Intent(mContext, ANAlarmReceiver.class);
         intent.putExtras(bundle);
-        int notificationID = Integer.parseInt(notificationIdString);
+
+		int notificationID;
+		try {
+			notificationID = Integer.parseInt(notificationIdString);
+		} catch (Exception e){
+			notificationIdString = String.valueOf(getRandomNumber(1000, 9999));
+			notificationID = Integer.parseInt(notificationIdString);
+		}
+		
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, notificationID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Log.e(TAG, "fd: "+fd);
