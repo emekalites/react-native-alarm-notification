@@ -199,6 +199,24 @@ In the location notification json specify the full file name:
 
 or check this issue if it'll help [https://github.com/emekalites/react-native-alarm-notification/issues/3](https://github.com/emekalites/react-native-alarm-notification/issues/3)
 
+## Handle notification intent
+
+```java
+public class MainActivity extends ReactActivity {
+    ...
+    
+    @Override
+    public void onNewIntent(Intent intent) {
+        // Do whatever you need to do
+        // e.g.
+        Bundle bundle = intent.getExtras();
+        JSONObject data = BundleJSONConverter.convertToJSON(bundle);
+        getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationOpened", data.toString());
+    }
+
+}
+```
+
 ## Some features are missing
 
 This module is customized to help with scheduling and sending notifications (local) in react-native. A couple of helpful features may be missing but hopefully they can be added as time goes on.
