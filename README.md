@@ -154,7 +154,12 @@ const alarmNotifData = {
 	color: "red",
 	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
 	tag: 'some_tag',
-	fire_date: fireDate                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
+	fire_date: fireDate,                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
+
+  // You can add any additional data that is important for the notification
+  // It will be added to the PendingIntent along with the rest of the bundle.
+  // e.g.
+  data: { foo: "bar" },
 };
 
 class App extends Component {
@@ -204,7 +209,7 @@ or check this issue if it'll help [https://github.com/emekalites/react-native-al
 ```java
 public class MainActivity extends ReactActivity {
     ...
-    
+
     @Override
     public void onNewIntent(Intent intent) {
         // Do whatever you need to do
