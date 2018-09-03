@@ -157,7 +157,12 @@ const alarmNotifData = {
 	color: "red",
 	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
 	tag: 'some_tag',
-	fire_date: fireDate                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
+	fire_date: fireDate,                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
+
+  // You can add any additional data that is important for the notification
+  // It will be added to the PendingIntent along with the rest of the bundle.
+  // e.g.
+  data: { foo: "bar" },
 };
 
 class App extends Component {
@@ -201,6 +206,24 @@ In the location notification json specify the full file name:
     sound_name: 'my_sound.mp3'
 
 or check this issue if it'll help [https://github.com/emekalites/react-native-alarm-notification/issues/3](https://github.com/emekalites/react-native-alarm-notification/issues/3)
+
+## Handle notification intent
+
+```java
+public class MainActivity extends ReactActivity {
+    ...
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        // Do whatever you need to do
+        // e.g.
+        Bundle bundle = intent.getExtras();
+        JSONObject data = BundleJSONConverter.convertToJSON(bundle);
+        getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationOpened", data.toString());
+    }
+
+}
+```
 
 ## Some features are missing
 
