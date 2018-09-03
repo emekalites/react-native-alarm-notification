@@ -159,10 +159,10 @@ const alarmNotifData = {
 	tag: 'some_tag',
 	fire_date: fireDate,                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
 
-  // You can add any additional data that is important for the notification
-  // It will be added to the PendingIntent along with the rest of the bundle.
-  // e.g.
-  data: { foo: "bar" },
+	// You can add any additional data that is important for the notification
+	// It will be added to the PendingIntent along with the rest of the bundle.
+	// e.g.
+  	data: { foo: "bar" },
 };
 
 class App extends Component {
