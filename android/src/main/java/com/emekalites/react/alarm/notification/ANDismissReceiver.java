@@ -1,12 +1,8 @@
 package com.emekalites.react.alarm.notification;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-
-import com.facebook.react.modules.core.DeviceEventManagerModule;
-
-import org.json.JSONObject;
 
 public class ANDismissReceiver extends BroadcastReceiver {
   @Override
