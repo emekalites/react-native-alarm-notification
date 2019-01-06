@@ -83,6 +83,13 @@ public class ANHelper {
         return (int) Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
+		Intent intent = new Intent(context, ANDismissReceiver.class);
+		intent.putExtra("com.emekalites.react.alarm.notification.notificationId", notificationId);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), notificationId, intent, 0);
+		return pendingIntent;
+	}
+
     /*
     *  Send notification after alarm rings and remove it from re-scheduling
     */
@@ -158,7 +165,8 @@ public class ANHelper {
                             .setCategory(NotificationCompat.CATEGORY_ALARM)
                             .setAutoCancel(bundle.getBoolean("auto_cancel", true))
                             .setSound(null)
-                            .setVibrate(null);
+                            .setVibrate(null)
+                            .setDeleteIntent(createOnDismissedIntent(mContext, notificationID));
 
             //large icon
             String largeIcon = bundle.getString("large_icon");
