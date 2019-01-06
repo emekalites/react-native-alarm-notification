@@ -84,11 +84,11 @@ public class ANHelper {
     }
 
     private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
-		Intent intent = new Intent(context, ANDismissReceiver.class);
-		intent.putExtra("com.emekalites.react.alarm.notification.notificationId", notificationId);
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), notificationId, intent, 0);
-		return pendingIntent;
-	}
+        Intent intent = new Intent(context, ANDismissReceiver.class);
+        intent.putExtra("com.emekalites.react.alarm.notification.notificationId", notificationId);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), notificationId, intent, 0);
+        return pendingIntent;
+    }
 
     /*
     *  Send notification after alarm rings and remove it from re-scheduling
