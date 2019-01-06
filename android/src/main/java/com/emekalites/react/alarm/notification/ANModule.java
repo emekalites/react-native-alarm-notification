@@ -20,10 +20,16 @@ import java.util.ArrayList;
 public class ANModule extends ReactContextBaseJavaModule {
     private final static String TAG = ANModule.class.getCanonicalName();
     private ANHelper anHelper;
+	private static ReactApplicationContext mReactContext;
 
     public ANModule(ReactApplicationContext reactContext) {
-        super(reactContext);
+		super(reactContext);
+        mReactContext = reactContext;        
         anHelper = new ANHelper((Application) reactContext.getApplicationContext());
+    }
+
+    static public ReactApplicationContext getReactAppContext() {
+        return mReactContext;
     }
 
     @Override
