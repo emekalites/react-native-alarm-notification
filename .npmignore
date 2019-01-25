@@ -16,6 +16,7 @@ android/.idea/*
 android/.gradle
 android/.gradle/*
 android/local.properties
+example
 
 release.js
 .DS_Store
