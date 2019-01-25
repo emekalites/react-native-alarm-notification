@@ -11,6 +11,12 @@ React Native Alarm Notification for Android
 
 `npm install --save react-native-alarm-notification`
 
+or
+
+`yarn add react-native-alarm-notification`
+
+## Linking
+
 `react-native link react-native-alarm-notification`
 
 **NOTE: For Android, you will still have to manually update the AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
@@ -36,6 +42,7 @@ In your `AndroidManifest.xml`
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
+		<receiver android:name="com.emekalites.react.alarm.notification.ANDismissReceiver" android:exported="false"/>
      .....
 ```
 
@@ -223,6 +230,17 @@ public class MainActivity extends ReactActivity {
     }
 
 }
+```
+
+## Listener for dissmised notification
+
+**NOTE: You can add a function here to go off after notification is dismissed.**
+
+```js
+DeviceEventEmitter.addListener('OnNotificationDismissed', async function(e) {
+    const obj = JSON.parse(e);
+    console.log(`Notification ${obj.id} dismissed`);
+});
 ```
 
 ## Some features are missing
