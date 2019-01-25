@@ -28,7 +28,7 @@ In your `AndroidManifest.xml`
 ```xml
     .....
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-	<uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -42,7 +42,7 @@ In your `AndroidManifest.xml`
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
-		<receiver android:name="com.emekalites.react.alarm.notification.ANDismissReceiver" android:exported="false"/>
+        <receiver android:name="com.emekalites.react.alarm.notification.ANDismissReceiver" android:exported="false"/>
      .....
 ```
 
@@ -62,7 +62,7 @@ dependencies {
     compile project(':react-native-alarm-notification')  // <--- add project
     ...
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:26.1.0" // <--- minimum support library version
+    compile "com.android.support:appcompat-v7:28.0.0" // <--- minimum support library version
     compile "com.facebook.react:react-native:+"  // From node_modules
 }
 ```
@@ -217,30 +217,53 @@ or check this issue if it'll help [https://github.com/emekalites/react-native-al
 ## Handle notification intent
 
 ```java
+
+...
+import android.content.Intent;
+import android.os.Bundle;
+import com.emekalites.react.alarm.notification.BundleJSONConverter;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import org.json.JSONObject;
+...
+
 public class MainActivity extends ReactActivity {
     ...
 
     @Override
     public void onNewIntent(Intent intent) {
-        // Do whatever you need to do
-        // e.g.
-        Bundle bundle = intent.getExtras();
-        JSONObject data = BundleJSONConverter.convertToJSON(bundle);
-        getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationOpened", data.toString());
+        try {
+            Bundle bundle = intent.getExtras();
+            JSONObject data = BundleJSONConverter.convertToJSON(bundle);
+            getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationOpened", data.toString());
+        } catch (Exception e){
+            System.err.println("Exception when handling notification openned. " + e);
+        }
     }
 
 }
 ```
 
-## Listener for dissmised notification
+## Listener for notifications
 
-**NOTE: You can add a function here to go off after notification is dismissed.**
+**NOTE: You can add a function here to go off after notification is opened or dismissed.**
 
 ```js
-DeviceEventEmitter.addListener('OnNotificationDismissed', async function(e) {
-    const obj = JSON.parse(e);
-    console.log(`Notification ${obj.id} dismissed`);
-});
+componentDidMount() {
+	DeviceEventEmitter.addListener('OnNotificationDismissed', async function(e) {
+		const obj = JSON.parse(e);
+		console.log(obj);
+	});
+
+	DeviceEventEmitter.addListener('OnNotificationOpened', async function(e) {
+		const obj = JSON.parse(e);
+		console.log(obj);
+	});
+}
+	
+componentWillUnmount() {
+	DeviceEventEmitter.removeListener('OnNotificationDismissed');
+	DeviceEventEmitter.removeListener('OnNotificationOpened');
+}
 ```
 
 ## Some features are missing
