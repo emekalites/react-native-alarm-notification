@@ -245,7 +245,11 @@ public class MainActivity extends ReactActivity {
 
 ## Listener for notifications
 
-**NOTE: You can add a function here to go off after notification is opened or dismissed.**
+**NOTE: You can add a function here to go off after notification is opened or dismissed. Please remember to import DeviceEventEmitter**
+
+```js
+import { DeviceEventEmitter } from 'react-native';
+```
 
 ```js
 componentDidMount() {
