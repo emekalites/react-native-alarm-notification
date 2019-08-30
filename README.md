@@ -152,6 +152,7 @@ const alarmNotifData = {
 	id: "12345",                                  // Required
 	title: "My Notification Title",               // Required
 	message: "My Notification Message",           // Required
+	use_big_text: true,                           // default: false
 	channel: "my_channel_id",                     // Required. Same id as specified in MainApplication's onCreate method
 	ticker: "My Notification Ticker",
 	auto_cancel: true,                            // default: true

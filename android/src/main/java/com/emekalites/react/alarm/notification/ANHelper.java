@@ -168,6 +168,10 @@ public class ANHelper {
                             .setVibrate(null)
                             .setDeleteIntent(createOnDismissedIntent(mContext, notificationID));
 
+            if(bundle.containsKey("use_big_text") && bundle.getBoolean("use_big_text")){
+                mBuilder = mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(bundle.getString("message")));
+            }
+
             //large icon
             String largeIcon = bundle.getString("large_icon");
             if(largeIcon != null && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
