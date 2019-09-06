@@ -21,5 +21,8 @@
   ],
   "author": "Chukwuemeka Ihedoro <caihedoro@gmail.com>",
   "homepage": "https://github.com/emekalites/react-native-alarm-notification",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@react-native-community/push-notification-ios": "^1.0.2"
+  }
 }
