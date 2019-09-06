@@ -1,4 +1,5 @@
-import { NativeModules } from 'react-native';
+import { NativeModules,Platform } from 'react-native';
+import sendNotificationIos from './ios-suport/sendNotificationIos'
 const RNAlarmNotification = NativeModules.RNAlarmNotification;
 const ReactNativeAN = {};
 
@@ -21,7 +22,9 @@ ReactNativeAN.stopAlarm = () => {
 };
 
 ReactNativeAN.sendNotification = (details) => {
-	RNAlarmNotification.sendNotification(details);
+	return Platform.OS === 'android' ? 
+	RNAlarmNotification.sendNotification(details) : 
+	sendNotificationIos(details)
 };
 
 ReactNativeAN.cancelNotification = (notificationID) => {
