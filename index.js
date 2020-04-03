@@ -1,9 +1,10 @@
 import { NativeModules } from 'react-native';
-const RNAlarmNotification = NativeModules.RNAlarmNotification;
+
+const { RNAlarmNotification } = NativeModules;
 const ReactNativeAN = {};
 
 ReactNativeAN.scheduleAlarm = (details) => {
-	if (!details.id) {
+	if (!details.alarmId) {
 		throw new Error('id is required for scheduled alarm');
 	}
 	RNAlarmNotification.scheduleAlarm(details);
@@ -16,23 +17,12 @@ ReactNativeAN.deleteAlarm = (notificationID) => {
 	RNAlarmNotification.deleteAlarm(notificationID);
 };
 
-ReactNativeAN.stopAlarm = () => {
+ReactNativeAN.stopAlarmSound = () => {
 	return RNAlarmNotification.stopAlarm();
 };
 
 ReactNativeAN.sendNotification = (details) => {
 	RNAlarmNotification.sendNotification(details);
-};
-
-ReactNativeAN.cancelNotification = (notificationID) => {
-	if (!notificationID) {
-		return;
-	}
-	RNAlarmNotification.cancelNotification(notificationID);
-};
-
-ReactNativeAN.cancelAllNotifications = () => {
-	RNAlarmNotification.cancelAllNotifications();
 };
 
 ReactNativeAN.removeFiredNotification = (notificationID) => {
@@ -46,8 +36,8 @@ ReactNativeAN.removeAllFiredNotifications = () => {
 	RNAlarmNotification.removeAllFiredNotifications();
 };
 
-ReactNativeAN.getScheduledAlarms = () => {
-	return RNAlarmNotification.getScheduledAlarms();
+ReactNativeAN.getScheduledAlarms = async () => {
+	return await RNAlarmNotification.getScheduledAlarms();
 };
 
 ReactNativeAN.parseDate = (rawDate) => {

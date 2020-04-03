@@ -3,23 +3,27 @@ import { View, Text, Button, TextInput, DeviceEventEmitter } from 'react-native'
 import ReactNativeAN from 'react-native-alarm-notification';
 
 const alarmNotifData = {
-	id: "22",
+	alarmId: "22",
 	title: "Alarm",
 	message: "Stand up",
 	vibrate: true,
 	play_sound: true,
-	schedule_once: true,
+	schedule_type: "once",
 	channel: "wakeup",
-	data: { content: "my notification id is 22" },
+  data: { content: "my notification id is 22" },
+  loop_sound: true,
 };
 
 class App extends Component {
 	constructor(props, context) {
-		super(props, context);
+    super(props, context);
+    
+    const fire_date = ReactNativeAN.parseDate(new Date(Date.now()));
+
 		this.state = {
-			fireDate: '',
+			fireDate: fire_date,
 			update: '',
-			futureFireDate: '0',
+			futureFireDate: '1000',
 		};
 		this.setAlarm = this.setAlarm.bind(this);
 		this.stopAlarm = this.stopAlarm.bind(this);
@@ -30,7 +34,7 @@ class App extends Component {
 		const details  = { ...alarmNotifData, fire_date: fireDate };
 		console.log(`alarm set: ${fireDate}`);
 		this.setState({ update: `alarm set: ${fireDate}` });
-		ReactNativeAN.scheduleAlarm(details);
+    ReactNativeAN.scheduleAlarm(details);
 	};
 
 	setFutureAlarm = () => {
@@ -44,7 +48,7 @@ class App extends Component {
 
 	stopAlarm = () => {
 		this.setState({ update: '' });
-		ReactNativeAN.stopAlarm();
+		ReactNativeAN.stopAlarmSound();
 	};
 
 	sendNotification = () => {
@@ -56,26 +60,30 @@ class App extends Component {
 	componentDidMount() {
 		DeviceEventEmitter.addListener('OnNotificationDismissed', async function(e) {
 			const obj = JSON.parse(e);
-			console.log(`Notification ${obj.id} dismissed`);
+			console.log(`Notification id: ${obj.id} dismissed`);
 		});
 		
 		DeviceEventEmitter.addListener('OnNotificationOpened', async function(e) {
 			const obj = JSON.parse(e);
 			console.log(obj);
 		});
-	}
+  }
+  
+  viewAlarms = async () => {
+    const list = await ReactNativeAN.getScheduledAlarms();
+    this.setState({ update: JSON.stringify(list) });
+  }
 	
 	componentWillUnmount() {
 		DeviceEventEmitter.removeListener('OnNotificationDismissed');
 		DeviceEventEmitter.removeListener('OnNotificationOpened');
 	}
 	
-
 	render() {
 		const { update, fireDate, futureFireDate } = this.state;
 		return (
 			<View style={{flex:1, padding: 20}}>
-				<Text>Alarm Schedule</Text>
+				<Text>Alarm Date (01-01-1976 00:00:00)</Text>
 				<View>
 					<TextInput
 						style={{height: 40, borderColor: 'gray', borderWidth: 1}}
@@ -84,7 +92,7 @@ class App extends Component {
 					/>
 				</View>
 				<View>
-					<Text>Future Time From Now:</Text>
+					<Text>Alarm Time From Now (eg 5):</Text>
 					<TextInput
 						style={{height: 40, borderColor: 'gray', borderWidth: 1}}
 						onChangeText={(text) => this.setState({ futureFireDate: text })}
@@ -116,6 +124,13 @@ class App extends Component {
 					<Button
 						onPress={this.stopAlarm}
 						title="Stop Alarm Sound"
+						color="#841584"
+					/>
+				</View>
+				<View style={{marginVertical: 18}}>
+					<Button
+						onPress={this.viewAlarms}
+						title="See all active alarms"
 						color="#841584"
 					/>
 				</View>

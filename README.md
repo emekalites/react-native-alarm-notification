@@ -7,7 +7,7 @@ React Native Alarm Notification for Android
 
 **NOTE: The iOS side of this module will be included when i have figured it out.**
 
-## Installation
+## Installing (React Native >= 0.60.0)
 
 `npm install --save react-native-alarm-notification`
 
@@ -15,11 +15,45 @@ or
 
 `yarn add react-native-alarm-notification`
 
-## Linking
+**_ IMPORTANT _**
 
-`react-native link react-native-alarm-notification`
+If your app crashes on **Android**, it could probably mean auto linking didn't work. You will need to make the following changes:
 
-**NOTE: For Android, you will still have to manually update the AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
+**android/app/src/main/java/\<AppName\>/MainApplication.java**
+
+- add `import com.emekalites.react.alarm.notification.ANPackage;` on the imports section
+- add `packages.add(new ANPackage());` in `List<ReactPackage> getPackages()`;
+
+**android/app/build.gradle**
+
+add `implementation project(':react-native-alarm-notification')` in the `dependencies` block
+
+**android/settings.gradle**
+
+add:
+
+```
+include ':react-native-alarm-notification'
+project(':react-native-alarm-notification').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-alarm-notification/android')
+
+```
+
+## Installing (React Native <= 0.59.x)
+
+`npm install --save react-native-alarm-notification`
+
+or
+
+`yarn add react-native-alarm-notification`
+
+Use `react-native link` to add the library to your project:
+
+```
+react-native link react-native-alarm-notification
+```
+Note: If you are using react-native version 0.60 or higher you don't need to link [react-native-alarm-notification](https://github.com/emekalites/react-native-alarm-notification).
+
+**NOTE: For Android, you will have to update your AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
 
 ## Android manual Installation
 
@@ -27,118 +61,67 @@ In your `AndroidManifest.xml`
 
 ```xml
     .....
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application ....>
-        <service android:name="com.emekalites.react.alarm.notification.ANService" android:enabled="true"/>
-        <receiver android:name="com.emekalites.react.alarm.notification.ANAlarmReceiver" android:enabled="true"/>
-        <receiver android:name="com.emekalites.react.alarm.notification.ANBootReceiver" android:enabled="true" android:exported="true">
+        <receiver
+            android:name="com.emekalites.react.alarm.notification.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="ACTION_DISMISS" />
+                <action android:name="ACTION_SNOOZE" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.emekalites.react.alarm.notification.ANDismissReceiver" android:exported="false"/>
+
+        <receiver
+            android:name="com.emekalites.react.alarm.notification.AlarmDismissReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name="com.emekalites.react.alarm.notification.AlarmBootReceiver"
+            android:directBootAware="true"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
      .....
 ```
 
-In `android/settings.gradle`
+## Alarm Notification Data 
 
-```gradle
-...
-
-include ':react-native-alarm-notification'
-project(':react-native-alarm-notification').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-alarm-notification/android')
-```
-
-In `app/build.gradle`
-
-```gradle
-dependencies {
-    compile project(':react-native-alarm-notification')  // <--- add project
-    ...
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:28.0.0" // <--- minimum support library version
-    compile "com.facebook.react:react-native:+"  // From node_modules
-}
-```
-
-Manually register module in `MainApplication.java` (if you did not use `react-native link`):
-
-```java
-import com.emekalites.react.alarm.notification.ANPackage;  // <--- Import Package
-
-public class MainApplication extends Application implements ReactApplication {
-
-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
-      @Override
-      protected boolean getUseDeveloperSupport() {
-        return BuildConfig.DEBUG;
-      }
-
-      @Override
-      protected List<ReactPackage> getPackages() {
-      	return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-          new ANPackage() 		// <---- Add the Package
-        );
-      }
-  };
-
-  ....
-}
-```
-
-Register your channel e.g. in `onCreate()`
-
-```java
-
-...
-import android.app.NotificationManager;
-import android.app.NotificationChannel;
-import android.content.Context;
-import android.graphics.Color;
-import android.os.Build;
-...
-
-public class MainApplication extends Application implements ReactApplication {
-
-  ...
-
-  @Override
-  public void onCreate() {
-    super.onCreate();
-
-    ...
-
-    String id = "my_channel_id";					// The id of the channel.
-    CharSequence name = "my_channel_name";			// The user-visible name of the channel.
-    String description = "my_channel_description";	// The user-visible description of the channel.
-
-    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT);
- 
-      // Configure the notification channel. 
-      mChannel.setDescription(description);
- 
-      mChannel.enableLights(true);
-      // Sets the notification light color for notifications posted to this
-      // channel, if the device supports this feature. 
-      mChannel.setLightColor(Color.RED);
- 
-      mChannel.enableVibration(true);
-      mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
- 
-      NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-	  mNotificationManager.createNotificationChannel(mChannel);
-    }
-  }
-}
-```
+| Prop           | Description                                                                                                                                                                                                                                                                     | Default                                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **`alarm_id`**   | **Required:** - Alarm identification number. `[number]` | _None_                                                                                                              |
+| **`auto_cancel`**    | Make this notification automatically dismissed when the user touches it. `[boolean]`                                                                                                                                             | `true` |
+| **`channel`**     | **Required:** - Specifies the channel the notification should be delivered on.. `[string]`                                                                                                                                                                                                             | `"my_channel_id"`                                                                                                              |
+| **`color`** | **Required:** Sets notification  color. `[color]`                                                                                                                                          | `"red"`                                                                                                             |
+| **`data`** | You can add any additional data that is important for the notification.                                                                                                                                           | `data: { foo: "bar" }`                                                                                                             |
+| **`fire_date`** | **Required:** Set date for Alarm to get triggered. eg `'04-03-2020 00:00:00'`. Should be a date in the future  .                                                                                                                                           | _None_                                                                                                             |
+| **`large_icon`** | Add a large icon to the notification content view. eg `"ic_large_icon"`. PS: make sure to add the file in your mipmap folders `[project_root]/android/app/src/main/res/mipmap*`                                                                                                                                           | _None_                                                                                                             |
+| **`loop_sound`** | Play sound continuously until you decide to stop it. `[boolean]`                                                                                                                                           | `false`                                                                                                             |
+| **`message`** | **Required:** Add Notification message.                                                                                                                                           | `"My Notification Message"`                                                                                                             |
+| **`play_sound`** | Play alarm notification sound. `[boolean]`                                                                                                                                           | `true`                                                                                                             |
+| **`repeat_interval`** | Interval set to repeat alarm if schedule_type is "repeat". `[number]` in minutes                                                                                                                                           | `1`                                                                                                             |
+| **`schedule_type`** | **Required:** Type of alarm schedule. `"once"` (to show alarm once) or `"repeat"` (to  display alarm after set repeat_interval)                                                                                                                                           | `"once"`                                                                                                             |
+| **`small_icon`** | **Required:** Set the small icon resource, which will be used to represent the notification in the status bar. eg `"ic_launcher"`. PS: make sure to add the file in your mipmap folders `[project_root]/android/app/src/main/res/mipmap*`                                                                                                                                           | `"ic_launcher"`                                                                                                             |
+| **`snooze_interval`** | Interval set to show alarm after snooze button is tapped. `[number]` in minutes                                                                                                                                           | `1`                                                                                                             |
+| **`sound_name`** | Set audio file to play when alarm is triggered. example `"sound_name.mp3"` or `"sound_name"`. PS: make sure to add the file in your res/raw folder `[project_root]/android/app/src/main/res/raw`                                                                                                                                           | _None_                                                                                                             |
+| **`sound_names`** | Set multiple audio files to play when alarm is triggered, each file will be picked to play at random. Separate files with a comma (`,`) example `"sound_name1.mp3,sound_name2.mp3"` or `"sound_name1,sound_name2"`. PS: make sure to add the files in your res/raw folder `[project_root]/android/app/src/main/res/raw`                                                                                                                                           | _None_                                                                                                             |
+| **`tag`** | Add a tag id to notification.                                                                                                                                           | _None_                                                                                                             |
+| **`ticker`** | Set the "ticker" text which is sent to accessibility services.. `[String]`                                                                                                                                          | _None_                                                                                                             |
+| **`title`** | **Required:** Add a title to notification.                                                                                                                                           | `"My Notification Title"`                                                                                                             |
+| **`vibrate`** | Set vibration when alarm is triggered. `[boolean]`                                                                                                                                           | `true`                                                                                                             |
+| **`vibration`** | Set number of milliseconds to vibrate. `[number]`                                                                                                                                           | `100`                                                                                                             |
 
 ## Usage
 
@@ -149,22 +132,11 @@ or
 const fireDate = '01-01-1976 00:00:00';			  // set exact date time | Format: dd-MM-yyyy HH:mm:ss
 
 const alarmNotifData = {
-	id: "12345",                                  // Required
-	title: "My Notification Title",               // Required
-	message: "My Notification Message",           // Required
-	channel: "my_channel_id",                     // Required. Same id as specified in MainApplication's onCreate method
-	ticker: "My Notification Ticker",
-	auto_cancel: true,                            // default: true
-	vibrate: true,
-	vibration: 100,                               // default: 100, no vibration if vibrate: false
-	small_icon: "ic_launcher",                    // Required
-	large_icon: "ic_launcher",
-	play_sound: true,
-	sound_name: null,                             // Plays custom notification ringtone if sound_name: null
-	color: "red",
-	schedule_once: true,                          // Works with ReactNativeAN.scheduleAlarm so alarm fires once
-	tag: 'some_tag',
-	fire_date: fireDate,                          // Date for firing alarm, Required for ReactNativeAN.scheduleAlarm.
+	alarm_id: 12345,
+	title: "My Notification Title",
+	message: "My Notification Message",
+	channel: "my_channel_id",
+	small_icon: "ic_launcher",
 
 	// You can add any additional data that is important for the notification
 	// It will be added to the PendingIntent along with the rest of the bundle.
@@ -180,39 +152,25 @@ class App extends Component {
         ReactNativeAN.scheduleAlarm(alarmNotifData);
 
         //Delete Scheduled Alarm
-        ReactNativeAN.deleteAlarm("12345");
+        ReactNativeAN.deleteAlarm(alarm_id);
 
         //Stop Alarm
-        ReactNativeAN.stopAlarm();
+        ReactNativeAN.stopAlarmSound();
 
         //Send Local Notification Now
         ReactNativeAN.sendNotification(alarmNotifData);
 
         //Get All Scheduled Alarms
-        ReactNativeAN.getScheduledAlarms().then(alarmNotif=>console.log(alarmNotif));
+        const alarms = await ReactNativeAN.getScheduledAlarms();
 
         //Clear Notification(s) From Notification Center/Tray
-        ReactNativeAN.removeAllFiredNotifications()
-        ReactNativeAN.removeFiredNotification("12345")
-
-        //Removes Future Local Notifications
-        ReactNativeAN.cancelAllNotifications()
-        ReactNativeAN.cancelNotification("12345")
+        ReactNativeAN.removeFiredNotification(alarm_id);
+        ReactNativeAN.removeAllFiredNotifications();
     }
 
 	...
 }
 ```
-
-## Custom sounds
-
-In android, add your custom sound file to `[project_root]/android/app/src/main/res/raw`
-
-In the location notification json specify the full file name:
-
-    sound_name: 'my_sound.mp3'
-
-or check this issue if it'll help [https://github.com/emekalites/react-native-alarm-notification/issues/3](https://github.com/emekalites/react-native-alarm-notification/issues/3)
 
 ## Handle notification intent
 
@@ -221,8 +179,11 @@ or check this issue if it'll help [https://github.com/emekalites/react-native-al
 ...
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.emekalites.react.alarm.notification.BundleJSONConverter;
+import com.facebook.react.ReactActivity;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 import org.json.JSONObject;
 ...
 
@@ -231,12 +192,15 @@ public class MainActivity extends ReactActivity {
 
     @Override
     public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         try {
             Bundle bundle = intent.getExtras();
-            JSONObject data = BundleJSONConverter.convertToJSON(bundle);
-            getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationOpened", data.toString());
-        } catch (Exception e){
-            System.err.println("Exception when handling notification openned. " + e);
+            if (bundle != null) {
+                JSONObject data = BundleJSONConverter.convertToJSON(bundle);
+                getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationOpened", data.toString());
+            }
+        } catch (Exception e) {
+            System.err.println("Exception when handling notification opened. " + e);
         }
     }
 
@@ -274,4 +238,4 @@ componentWillUnmount() {
 
 This module is customized to help with scheduling and sending notifications (local) in react-native. A couple of helpful features may be missing but hopefully they can be added as time goes on.
 
-NOTE: If you need a react-native module that takes care of Firebase Cloud Messaging, you could try [https://github.com/evollu/react-native-fcm](https://github.com/evollu/react-native-fcm)
+NOTE: If you need a react-native module that takes care of Firebase Cloud Messaging, you could use [react-native-firebase](https://github.com/invertase/react-native-firebase)
