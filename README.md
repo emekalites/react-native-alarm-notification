@@ -122,6 +122,7 @@ In your `AndroidManifest.xml`
 | **`title`** | **Required:** Add a title to notification.                                                                                                                                           | `"My Notification Title"`                                                                                                             |
 | **`vibrate`** | Set vibration when alarm is triggered. `[boolean]`                                                                                                                                           | `true`                                                                                                             |
 | **`vibration`** | Set number of milliseconds to vibrate. `[number]`                                                                                                                                           | `100`                                                                                                             |
+| **`use_big_text`** | Set notification message style as big text. `[boolean]`                                                                                                                                           | `false`                                                                                                             |
 
 ## Usage
 

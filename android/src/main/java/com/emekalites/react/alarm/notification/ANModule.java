@@ -77,6 +77,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setTitle(bundle.getString("title", "My Notification Title"));
         alarm.setVibrate(bundle.getBoolean("vibrate", true));
         alarm.setVibration(bundle.getInt("vibration", 100));
+        alarm.setUseBigText(bundle.getBoolean("use_big_text", false));
 
         try {
             int alarmId = bundle.getInt("alarm_id");
@@ -156,6 +157,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setTitle(bundle.getString("title", "My Notification Title"));
         alarm.setVibrate(bundle.getBoolean("loop_sound", true));
         alarm.setVibration(bundle.getInt("vibration", 100));
+        alarm.setUseBigText(bundle.getBoolean("use_big_text", false));
 
         Calendar calendar = GregorianCalendar.getInstance();
 
@@ -188,8 +190,8 @@ public class ANModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void removeFiredNotification(String notificationID) {
-        alarmUtil.removeFiredNotification(Integer.parseInt(notificationID));
+    public void removeFiredNotification(String alarm_id) {
+        alarmUtil.removeFiredNotification(Integer.parseInt(alarm_id));
     }
 
     @ReactMethod

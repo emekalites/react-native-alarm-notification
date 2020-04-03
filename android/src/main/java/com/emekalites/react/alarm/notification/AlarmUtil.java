@@ -376,6 +376,11 @@ class AlarmUtil {
             NotificationCompat.Action snoozeAction = new NotificationCompat.Action(R.drawable.ic_snooze, "SNOOZE", pendingSnooze);
             mBuilder.addAction(snoozeAction);
 
+            //use big text
+            if(alarm.isUseBigText()){
+                mBuilder = mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+            }
+
             //large icon
             String largeIcon = alarm.getLargeIcon();
             if (largeIcon != null && !largeIcon.equals("") && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {

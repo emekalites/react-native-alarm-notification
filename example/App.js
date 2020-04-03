@@ -3,15 +3,15 @@ import { View, Text, Button, TextInput, DeviceEventEmitter } from 'react-native'
 import ReactNativeAN from 'react-native-alarm-notification';
 
 const alarmNotifData = {
-	alarmId: "22",
+	alarm_id: "22",
 	title: "Alarm",
 	message: "Stand up",
 	vibrate: true,
 	play_sound: true,
 	schedule_type: "once",
 	channel: "wakeup",
-  data: { content: "my notification id is 22" },
-  loop_sound: true,
+	data: { content: "my notification id is 22" },
+	loop_sound: true,
 };
 
 class App extends Component {

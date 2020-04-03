@@ -32,6 +32,7 @@ public class AlarmModel implements Serializable {
     private String tag;
     private String data;
     private boolean loopSound = false;
+    private boolean useBigText = false;
 
     private int active = 1;         // 1 = yes, 0 = no
 
@@ -251,6 +252,14 @@ public class AlarmModel implements Serializable {
         this.loopSound = loopSound;
     }
 
+    public boolean isUseBigText() {
+        return useBigText;
+    }
+
+    public void setUseBigText(boolean useBigText) {
+        this.useBigText = useBigText;
+    }
+
     @Override
     public String toString() {
         return "AlarmModel{" +
@@ -280,6 +289,7 @@ public class AlarmModel implements Serializable {
                 ", tag='" + tag + '\'' +
                 ", data='" + data + '\'' +
                 ", loopSound=" + loopSound +
+                ", useBigText=" + useBigText +
                 ", active=" + active +
                 '}';
     }

@@ -4,17 +4,17 @@ const { RNAlarmNotification } = NativeModules;
 const ReactNativeAN = {};
 
 ReactNativeAN.scheduleAlarm = (details) => {
-	if (!details.alarmId) {
-		throw new Error('id is required for scheduled alarm');
+	if (!details.alarm_id) {
+		throw new Error('alarm_id is required for scheduled alarm');
 	}
 	RNAlarmNotification.scheduleAlarm(details);
 };
 
-ReactNativeAN.deleteAlarm = (notificationID) => {
-	if (!notificationID) {
+ReactNativeAN.deleteAlarm = (alarm_id) => {
+	if (!alarm_id) {
 		return;
 	}
-	RNAlarmNotification.deleteAlarm(notificationID);
+	RNAlarmNotification.deleteAlarm(alarm_id);
 };
 
 ReactNativeAN.stopAlarmSound = () => {
@@ -25,11 +25,11 @@ ReactNativeAN.sendNotification = (details) => {
 	RNAlarmNotification.sendNotification(details);
 };
 
-ReactNativeAN.removeFiredNotification = (notificationID) => {
-	if (!notificationID) {
+ReactNativeAN.removeFiredNotification = (alarm_id) => {
+	if (!alarm_id) {
 		return;
 	}
-	RNAlarmNotification.removeFiredNotification(notificationID);
+	RNAlarmNotification.removeFiredNotification(alarm_id);
 };
 
 ReactNativeAN.removeAllFiredNotifications = () => {
