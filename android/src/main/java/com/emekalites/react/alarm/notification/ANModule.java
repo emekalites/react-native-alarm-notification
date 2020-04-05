@@ -80,7 +80,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setUseBigText(bundle.getBoolean("use_big_text", false));
 
         try {
-            int alarmId = bundle.getInt("alarm_id");
+            int alarmId = Integer.parseInt(bundle.getInt("alarm_id"));
             if (alarmId == 0) {
                 alarmId = (int) System.currentTimeMillis();
             }
@@ -168,7 +168,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setYear(calendar.get(Calendar.YEAR));
 
         try {
-            int alarmId = bundle.getInt("alarm_id");
+            int alarmId = Integer.parseInt(bundle.getInt("alarm_id"));
             if (alarmId == 0) {
                 alarmId = (int) System.currentTimeMillis();
             }
