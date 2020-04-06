@@ -80,8 +80,8 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setUseBigText(bundle.getBoolean("use_big_text", false));
 
         try {
-            int alarmId = Integer.parseInt(bundle.getInt("alarm_id"));
-            if (alarmId == 0) {
+            int alarmId = Integer.parseInt(bundle.getString("alarm_id"));
+            if (alarmId <= 0) {
                 alarmId = (int) System.currentTimeMillis();
             }
             alarm.setAlarmId(alarmId);
@@ -158,8 +158,16 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setVibrate(bundle.getBoolean("loop_sound", true));
         alarm.setVibration(bundle.getInt("vibration", 100));
         alarm.setUseBigText(bundle.getBoolean("use_big_text", false));
+        
+        String datetime = bundle.getString("fire_date");
+        if (datetime == null || datetime.equals("")) {
+            Log.e(TAG, "failed to schedule notification because fire date is missing");
+            return;
+        }
 
-        Calendar calendar = GregorianCalendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(sdf.parse(datetime));
 
         alarm.setMinute(calendar.get(Calendar.MINUTE));
         alarm.setHour(calendar.get(Calendar.HOUR_OF_DAY));
@@ -168,8 +176,8 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setYear(calendar.get(Calendar.YEAR));
 
         try {
-            int alarmId = Integer.parseInt(bundle.getInt("alarm_id"));
-            if (alarmId == 0) {
+            int alarmId = Integer.parseInt(bundle.getString("alarm_id"));
+            if (alarmId <= 0) {
                 alarmId = (int) System.currentTimeMillis();
             }
             alarm.setAlarmId(alarmId);

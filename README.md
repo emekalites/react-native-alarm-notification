@@ -133,7 +133,7 @@ or
 const fireDate = '01-01-1976 00:00:00';			  // set exact date time | Format: dd-MM-yyyy HH:mm:ss
 
 const alarmNotifData = {
-	alarm_id: 12345,
+	alarm_id: "12345",
 	title: "My Notification Title",
 	message: "My Notification Message",
 	channel: "my_channel_id",

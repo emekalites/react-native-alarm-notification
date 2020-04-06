@@ -12,7 +12,7 @@ ReactNativeAN.scheduleAlarm = (details) => {
 
 ReactNativeAN.deleteAlarm = (alarm_id) => {
 	if (!alarm_id) {
-		return;
+		throw new Error('alarm_id is required for scheduled alarm');
 	}
 	RNAlarmNotification.deleteAlarm(alarm_id);
 };
@@ -27,7 +27,7 @@ ReactNativeAN.sendNotification = (details) => {
 
 ReactNativeAN.removeFiredNotification = (alarm_id) => {
 	if (!alarm_id) {
-		return;
+		throw new Error('alarm_id is required for scheduled alarm');
 	}
 	RNAlarmNotification.removeFiredNotification(alarm_id);
 };
