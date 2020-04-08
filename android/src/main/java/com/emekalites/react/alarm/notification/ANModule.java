@@ -103,7 +103,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setMinute(calendar.get(Calendar.MINUTE));
         alarm.setHour(calendar.get(Calendar.HOUR_OF_DAY));
         alarm.setDay(calendar.get(Calendar.DAY_OF_MONTH));
-        alarm.setMonth(calendar.get(Calendar.MONTH) - 1);
+        alarm.setMonth(calendar.get(Calendar.MONTH) + 1);
         alarm.setYear(calendar.get(Calendar.YEAR));
 
         boolean containAlarm = alarmUtil.checkAlarm(getAlarmDB().getAlarmList(1), alarm);
@@ -174,7 +174,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setMinute(calendar.get(Calendar.MINUTE));
         alarm.setHour(calendar.get(Calendar.HOUR_OF_DAY));
         alarm.setDay(calendar.get(Calendar.DAY_OF_MONTH));
-        alarm.setMonth(calendar.get(Calendar.MONTH) - 1);
+        alarm.setMonth(calendar.get(Calendar.MONTH) + 1);
         alarm.setYear(calendar.get(Calendar.YEAR));
 
         try {
