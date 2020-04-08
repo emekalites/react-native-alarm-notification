@@ -7,6 +7,7 @@ public class AlarmModel implements Serializable {
 
     private int minute;
     private int hour;
+    private int second;
 
     private int day;
     private int month;
@@ -42,6 +43,14 @@ public class AlarmModel implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getSecond() {
+        return second;
+    }
+
+    public void setSecond(int second) {
+        this.second = second;
     }
 
     public int getMinute() {
@@ -264,6 +273,7 @@ public class AlarmModel implements Serializable {
     public String toString() {
         return "AlarmModel{" +
                 "id=" + id +
+                ", second=" + second +
                 ", minute=" + minute +
                 ", hour=" + hour +
                 ", day=" + day +

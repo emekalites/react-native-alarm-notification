@@ -42,11 +42,11 @@ public class AlarmDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    AlarmModel getAlarm(int alarmId) {
+    AlarmModel getAlarm(int _id) {
         SQLiteDatabase db = this.getWritableDatabase();
         AlarmModel alarm = null;
 
-        String selectQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + COL_ID + "=" + alarmId;
+        String selectQuery = "SELECT * FROM " +TABLE_NAME+ " WHERE " + COL_ID + "=" + _id;
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 

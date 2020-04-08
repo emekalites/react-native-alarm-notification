@@ -130,7 +130,7 @@ class AlarmUtil {
         Calendar calendar = new GregorianCalendar();
         calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
         calendar.set(Calendar.MINUTE, alarm.getMinute());
-        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.SECOND, alarm.getSecond());
         calendar.set(Calendar.DAY_OF_MONTH, alarm.getDay());
         calendar.set(Calendar.MONTH, alarm.getMonth() - 1);
         calendar.set(Calendar.YEAR, alarm.getYear());
@@ -170,7 +170,7 @@ class AlarmUtil {
         Calendar calendar = new GregorianCalendar();
         calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
         calendar.set(Calendar.MINUTE, alarm.getMinute());
-        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.SECOND, alarm.getSecond());
         calendar.set(Calendar.DAY_OF_MONTH, alarm.getDay());
         calendar.set(Calendar.MONTH, alarm.getMonth() - 1);
         calendar.set(Calendar.YEAR, alarm.getYear());
@@ -178,6 +178,7 @@ class AlarmUtil {
         // set snooze interval
         calendar.add(Calendar.MINUTE, alarm.getSnoozeInterval());
 
+        alarm.setSecond(calendar.get(Calendar.SECOND));
         alarm.setMinute(calendar.get(Calendar.MINUTE));
         alarm.setHour(calendar.get(Calendar.HOUR_OF_DAY));
         alarm.setDay(calendar.get(Calendar.DAY_OF_MONTH));
