@@ -46,7 +46,7 @@ public class AlarmDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         AlarmModel alarm = null;
 
-        String selectQuery = "SELECT * FROM " +TABLE_NAME+ " WHERE " + COL_ID + "=" + _id;
+        String selectQuery = "SELECT * FROM " +TABLE_NAME+ " WHERE " + COL_ID + " LIKE '%" + _id + "%'";
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 
