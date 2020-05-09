@@ -63,12 +63,12 @@ public class AlarmReceiver extends BroadcastReceiver {
                             alarm = alarmDB.getAlarm(id);
                             alarmUtil.snoozeAlarm(alarm);
                             Log.e(TAG, "alarm snoozed: " + alarm.toString());
+
+                            alarmUtil.stopAlarmSound();
+                            alarmUtil.removeFiredNotification(alarm.getAlarmId());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
-                        alarmUtil.stopAlarmSound();
-                        alarmUtil.removeFiredNotification(alarm.getAlarmId());
                         break;
 
                     case Constants.NOTIFICATION_ACTION_DISMISS:
@@ -78,15 +78,15 @@ public class AlarmReceiver extends BroadcastReceiver {
                             alarm = alarmDB.getAlarm(id);
                             alarmUtil.cancelAlarm(alarm);
                             Log.e(TAG, "alarm cancelled: " + alarm.toString());
+
+                            // emit notification dismissed
+                            ANModule.getReactAppContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationDismissed", "{\"id\": \"" + alarm.getAlarmId() + "\"}");
+
+                            alarmUtil.stopAlarmSound();
+                            alarmUtil.removeFiredNotification(alarm.getAlarmId());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
-                        // emit notification dismissed
-                        ANModule.getReactAppContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationDismissed", "{\"id\": \"" + alarm.getAlarmId() + "\"}");
-
-                        alarmUtil.stopAlarmSound();
-                        alarmUtil.removeFiredNotification(alarm.getAlarmId());
                         break;
                 }
             }

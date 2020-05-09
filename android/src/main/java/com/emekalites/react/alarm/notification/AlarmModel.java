@@ -34,6 +34,7 @@ public class AlarmModel implements Serializable {
     private String data;
     private boolean loopSound = false;
     private boolean useBigText = false;
+    private boolean hasButton = false;
 
     private int active = 1;         // 1 = yes, 0 = no
 
@@ -269,6 +270,14 @@ public class AlarmModel implements Serializable {
         this.useBigText = useBigText;
     }
 
+    public boolean isHasButton() {
+        return hasButton;
+    }
+
+    public void setHasButton(boolean hasButton) {
+        this.hasButton = hasButton;
+    }
+
     @Override
     public String toString() {
         return "AlarmModel{" +
@@ -300,6 +309,7 @@ public class AlarmModel implements Serializable {
                 ", data='" + data + '\'' +
                 ", loopSound=" + loopSound +
                 ", useBigText=" + useBigText +
+                ", hasButton=" + hasButton +
                 ", active=" + active +
                 '}';
     }

@@ -363,19 +363,21 @@ class AlarmUtil {
 
             mBuilder.setContentIntent(pendingIntent);
 
-            Intent dismissIntent = new Intent(mContext, AlarmReceiver.class);
-            dismissIntent.setAction(NOTIFICATION_ACTION_DISMISS);
-            dismissIntent.putExtra("AlarmId", alarm.getId());
-            PendingIntent pendingDismiss = PendingIntent.getBroadcast(mContext, notificationID, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Action dismissAction = new NotificationCompat.Action(android.R.drawable.ic_lock_idle_alarm, "DISMISS", pendingDismiss);
-            mBuilder.addAction(dismissAction);
+            if(alarm.isHasButton()){
+                Intent dismissIntent = new Intent(mContext, AlarmReceiver.class);
+                dismissIntent.setAction(NOTIFICATION_ACTION_DISMISS);
+                dismissIntent.putExtra("AlarmId", alarm.getId());
+                PendingIntent pendingDismiss = PendingIntent.getBroadcast(mContext, notificationID, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                NotificationCompat.Action dismissAction = new NotificationCompat.Action(android.R.drawable.ic_lock_idle_alarm, "DISMISS", pendingDismiss);
+                mBuilder.addAction(dismissAction);
 
-            Intent snoozeIntent = new Intent(mContext, AlarmReceiver.class);
-            snoozeIntent.setAction(NOTIFICATION_ACTION_SNOOZE);
-            snoozeIntent.putExtra("SnoozeAlarmId", alarm.getId());
-            PendingIntent pendingSnooze = PendingIntent.getBroadcast(mContext, notificationID, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Action snoozeAction = new NotificationCompat.Action(R.drawable.ic_snooze, "SNOOZE", pendingSnooze);
-            mBuilder.addAction(snoozeAction);
+                Intent snoozeIntent = new Intent(mContext, AlarmReceiver.class);
+                snoozeIntent.setAction(NOTIFICATION_ACTION_SNOOZE);
+                snoozeIntent.putExtra("SnoozeAlarmId", alarm.getId());
+                PendingIntent pendingSnooze = PendingIntent.getBroadcast(mContext, notificationID, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                NotificationCompat.Action snoozeAction = new NotificationCompat.Action(R.drawable.ic_snooze, "SNOOZE", pendingSnooze);
+                mBuilder.addAction(snoozeAction);
+            }
 
             //use big text
             if(alarm.isUseBigText()){
