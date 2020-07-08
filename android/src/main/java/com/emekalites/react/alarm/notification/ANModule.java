@@ -100,12 +100,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(sdf.parse(datetime));
 
-        alarm.setSecond(calendar.get(Calendar.SECOND));
-        alarm.setMinute(calendar.get(Calendar.MINUTE));
-        alarm.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-        alarm.setDay(calendar.get(Calendar.DAY_OF_MONTH));
-        alarm.setMonth(calendar.get(Calendar.MONTH) + 1);
-        alarm.setYear(calendar.get(Calendar.YEAR));
+        alarmUtil.setAlarmFromCalendar(alarm, calendar);
 
         boolean containAlarm = alarmUtil.checkAlarm(getAlarmDB().getAlarmList(1), alarm);
         if (!containAlarm) {
@@ -172,12 +167,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(sdf.parse(datetime));
 
-        alarm.setSecond(calendar.get(Calendar.SECOND));
-        alarm.setMinute(calendar.get(Calendar.MINUTE));
-        alarm.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-        alarm.setDay(calendar.get(Calendar.DAY_OF_MONTH));
-        alarm.setMonth(calendar.get(Calendar.MONTH) + 1);
-        alarm.setYear(calendar.get(Calendar.YEAR));
+        alarmUtil.setAlarmFromCalendar(alarm, calendar);
 
         try {
             int alarmId = Integer.parseInt(bundle.getString("alarm_id"));

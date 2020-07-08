@@ -127,13 +127,7 @@ class AlarmUtil {
         alarm.setActive(1);
         getAlarmDB().update(alarm);
 
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
-        calendar.set(Calendar.MINUTE, alarm.getMinute());
-        calendar.set(Calendar.SECOND, alarm.getSecond());
-        calendar.set(Calendar.DAY_OF_MONTH, alarm.getDay());
-        calendar.set(Calendar.MONTH, alarm.getMonth() - 1);
-        calendar.set(Calendar.YEAR, alarm.getYear());
+        Calendar calendar = getCalendarFromAlarm(alarm);
 
         Log.e(TAG, alarm.getAlarmId() + " - " + calendar.getTime().toString());
 
@@ -167,23 +161,12 @@ class AlarmUtil {
     }
 
     void snoozeAlarm(AlarmModel alarm) {
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
-        calendar.set(Calendar.MINUTE, alarm.getMinute());
-        calendar.set(Calendar.SECOND, alarm.getSecond());
-        calendar.set(Calendar.DAY_OF_MONTH, alarm.getDay());
-        calendar.set(Calendar.MONTH, alarm.getMonth() - 1);
-        calendar.set(Calendar.YEAR, alarm.getYear());
+        Calendar calendar = getCalendarFromAlarm(alarm);
 
         // set snooze interval
         calendar.add(Calendar.MINUTE, alarm.getSnoozeInterval());
 
-        alarm.setSecond(calendar.get(Calendar.SECOND));
-        alarm.setMinute(calendar.get(Calendar.MINUTE));
-        alarm.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-        alarm.setDay(calendar.get(Calendar.DAY_OF_MONTH));
-        alarm.setMonth(calendar.get(Calendar.MONTH) - 1);
-        alarm.setYear(calendar.get(Calendar.YEAR));
+        setAlarmFromCalendar(alarm, calendar);
 
         alarm.setAlarmId((int) System.currentTimeMillis());
 
@@ -239,6 +222,29 @@ class AlarmUtil {
         alarmManager.cancel(alarmIntent);
 
         this.setBootReceiver();
+    }
+
+    Calendar getCalendarFromAlarm(AlarmModel alarm)
+    {
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
+        calendar.set(Calendar.MINUTE, alarm.getMinute());
+        calendar.set(Calendar.SECOND, alarm.getSecond());
+        calendar.set(Calendar.DAY_OF_MONTH, alarm.getDay());
+        calendar.set(Calendar.MONTH, alarm.getMonth() - 1);
+        calendar.set(Calendar.YEAR, alarm.getYear());
+        return calendar;
+    }
+
+    void setAlarmFromCalendar(AlarmModel alarm, Calendar calendar)
+    {
+
+        alarm.setSecond(calendar.get(Calendar.SECOND));
+        alarm.setMinute(calendar.get(Calendar.MINUTE));
+        alarm.setHour(calendar.get(Calendar.HOUR_OF_DAY));
+        alarm.setDay(calendar.get(Calendar.DAY_OF_MONTH));
+        alarm.setMonth(calendar.get(Calendar.MONTH) + 1);
+        alarm.setYear(calendar.get(Calendar.YEAR));
     }
 
     private void enableBootReceiver(Context context) {
