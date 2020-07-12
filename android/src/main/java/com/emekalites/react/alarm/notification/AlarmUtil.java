@@ -101,7 +101,8 @@ class AlarmUtil {
     boolean checkAlarm(ArrayList<AlarmModel> alarms, AlarmModel alarm) {
         boolean contain = false;
         for (AlarmModel aAlarm : alarms) {
-            if (aAlarm.getHour() == alarm.getHour() && aAlarm.getMinute() == alarm.getMinute() && aAlarm.getDay() == alarm.getDay() && aAlarm.getMonth() == alarm.getMonth() && aAlarm.getYear() == alarm.getYear()) {
+            if (aAlarm.getHour() == alarm.getHour() && aAlarm.getMinute() == alarm.getMinute() && aAlarm.getDay() == alarm.getDay() 
+                && aAlarm.getMonth() == alarm.getMonth() && aAlarm.getYear() == alarm.getYear() && aAlarm.getActive() == 1) {
                 contain = true;
                 break;
             }
