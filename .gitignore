@@ -40,4 +40,3 @@ local.properties
 buck-out/
 \.buckd/
 *.keystore
-_ios
