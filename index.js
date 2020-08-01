@@ -3,18 +3,20 @@ import { NativeModules } from 'react-native';
 const { RNAlarmNotification } = NativeModules;
 const ReactNativeAN = {};
 
-ReactNativeAN.scheduleAlarm = (details) => {
-	if (!details.alarm_id) {
-		throw new Error('alarm_id is required for scheduled alarm');
+ReactNativeAN.scheduleAlarm = async (details) => {
+	if (!details.fire_date || (details.fire_date && details.fire_date === '')) {
+		throw new Error('failed to schedule alarm because fire date is missing');
 	}
-	RNAlarmNotification.scheduleAlarm(details);
+
+	return await RNAlarmNotification.scheduleAlarm(details);
 };
 
-ReactNativeAN.deleteAlarm = (alarm_id) => {
-	if (!alarm_id) {
-		throw new Error('alarm_id is required for scheduled alarm');
+ReactNativeAN.deleteAlarm = (id) => {
+	if (!id) {
+		throw new Error('id is required to delete alarm');
 	}
-	RNAlarmNotification.deleteAlarm(alarm_id);
+
+	RNAlarmNotification.deleteAlarm(id);
 };
 
 ReactNativeAN.stopAlarmSound = () => {
@@ -25,11 +27,12 @@ ReactNativeAN.sendNotification = (details) => {
 	RNAlarmNotification.sendNotification(details);
 };
 
-ReactNativeAN.removeFiredNotification = (alarm_id) => {
-	if (!alarm_id) {
-		throw new Error('alarm_id is required for scheduled alarm');
+ReactNativeAN.removeFiredNotification = (id) => {
+	if (!id) {
+		throw new Error('id is required to remove notification');
 	}
-	RNAlarmNotification.removeFiredNotification(alarm_id);
+
+	RNAlarmNotification.removeFiredNotification(id);
 };
 
 ReactNativeAN.removeAllFiredNotifications = () => {

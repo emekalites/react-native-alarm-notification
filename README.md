@@ -10,7 +10,7 @@ React Native Alarm Notification for Android
 
 ## Installing (React Native >= 0.60.0)
 
-`npm install --save react-native-alarm-notification`
+`npm install react-native-alarm-notification --save`
 
 or
 
@@ -41,7 +41,7 @@ project(':react-native-alarm-notification').projectDir = new File(rootProject.pr
 
 ## Installing (React Native <= 0.59.x)
 
-`npm install --save react-native-alarm-notification`
+`npm install react-native-alarm-notification --save`
 
 or
 
@@ -102,7 +102,6 @@ In your `AndroidManifest.xml`
 
 | Prop           | Description                                                                                                                                                                                                                                                                     | Default                                                                                                             |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **`alarm_id`**   | **Required:** - Alarm identification number. `[number]` | _None_                                                                                                              |
 | **`auto_cancel`**    | Make this notification automatically dismissed when the user touches it. `[boolean]`                                                                                                                                             | `true` |
 | **`channel`**     | **Required:** - Specifies the channel the notification should be delivered on.. `[string]`                                                                                                                                                                                                             | `"my_channel_id"`                                                                                                              |
 | **`color`** | **Required:** Sets notification  color. `[color]`                                                                                                                                          | `"red"`                                                                                                             |
@@ -130,12 +129,12 @@ In your `AndroidManifest.xml`
 
 ```javascript
 import ReactNativeAN from 'react-native-alarm-notification';
+
 const fireDate = ReactNativeAN.parseDate(new Date(Date.now() + 1000));     // set the fire date for 1 second from now
 or
-const fireDate = '01-01-1976 00:00:00';			  // set exact date time | Format: dd-MM-yyyy HH:mm:ss
+const fireDate = '01-01-2060 00:00:00';			  // set exact date time | Format: dd-MM-yyyy HH:mm:ss
 
 const alarmNotifData = {
-	alarm_id: "12345",
 	title: "My Notification Title",
 	message: "My Notification Message",
 	channel: "my_channel_id",
@@ -150,12 +149,13 @@ const alarmNotifData = {
 class App extends Component {
 	...
 
-    method(){
+    async method(){
         //Schedule Future Alarm
-        ReactNativeAN.scheduleAlarm(alarmNotifData);
+		const alarm = await ReactNativeAN.scheduleAlarm({ ...alarmNotifData, fire_date: fireDate });
+		console.log(alarm); // { id: 1 }
 
         //Delete Scheduled Alarm
-        ReactNativeAN.deleteAlarm(alarm_id);
+        ReactNativeAN.deleteAlarm(alarm.id);
 
         //Stop Alarm
         ReactNativeAN.stopAlarmSound();
@@ -167,7 +167,7 @@ class App extends Component {
         const alarms = await ReactNativeAN.getScheduledAlarms();
 
         //Clear Notification(s) From Notification Center/Tray
-        ReactNativeAN.removeFiredNotification(alarm_id);
+        ReactNativeAN.removeFiredNotification(alarm.id);
         ReactNativeAN.removeAllFiredNotifications();
     }
 

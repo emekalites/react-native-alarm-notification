@@ -18,6 +18,7 @@ public class AlarmDatabase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "rnandb";
 
     private static final String TABLE_NAME = "alarmtbl";
+
     private static final String COL_ID = "id";
     private static final String COL_DATA = "gson_data";
     private static final String COL_ACTIVE = "active";
@@ -46,7 +47,7 @@ public class AlarmDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         AlarmModel alarm = null;
 
-        String selectQuery = "SELECT * FROM " +TABLE_NAME+ " WHERE " + COL_ID + " LIKE '%" + _id + "%'";
+        String selectQuery = "SELECT * FROM " +TABLE_NAME+ " WHERE " + COL_ID + " = " + _id;
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 

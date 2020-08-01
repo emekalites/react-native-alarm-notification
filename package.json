@@ -4,6 +4,13 @@
   "version": "1.4.6",
   "description": "schedule alarm with notification in react-native",
   "main": "index.js",
+  "files": [
+    "README.md",
+    "android",
+    "index.js",
+    "ios",
+    "react-native-alarm-notification.podspec"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

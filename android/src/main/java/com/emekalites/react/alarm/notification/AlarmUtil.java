@@ -101,8 +101,7 @@ class AlarmUtil {
     boolean checkAlarm(ArrayList<AlarmModel> alarms, AlarmModel alarm) {
         boolean contain = false;
         for (AlarmModel aAlarm : alarms) {
-            if (aAlarm.getHour() == alarm.getHour() && aAlarm.getMinute() == alarm.getMinute() && aAlarm.getDay() == alarm.getDay() 
-                && aAlarm.getMonth() == alarm.getMonth() && aAlarm.getYear() == alarm.getYear() && aAlarm.getActive() == 1) {
+            if (aAlarm.getHour() == alarm.getHour() && aAlarm.getMinute() == alarm.getMinute() && aAlarm.getDay() == alarm.getDay() && aAlarm.getMonth() == alarm.getMonth() && aAlarm.getYear() == alarm.getYear() && aAlarm.getActive() == 1) {
                 contain = true;
                 break;
             }
@@ -125,9 +124,6 @@ class AlarmUtil {
     }
 
     void setAlarm(AlarmModel alarm) {
-        alarm.setActive(1);
-        getAlarmDB().update(alarm);
-
         Calendar calendar = getCalendarFromAlarm(alarm);
 
         Log.e(TAG, alarm.getAlarmId() + " - " + calendar.getTime().toString());
@@ -201,9 +197,9 @@ class AlarmUtil {
         }
     }
 
-    void doCancelAlarm(String id) {
+    void doCancelAlarm(int id) {
         try {
-            AlarmModel alarm = getAlarmDB().getAlarm(Integer.parseInt(id));
+            AlarmModel alarm = getAlarmDB().getAlarm(id);
             this.cancelAlarm(alarm);
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,9 +207,6 @@ class AlarmUtil {
     }
 
     void cancelAlarm(AlarmModel alarm) {
-        alarm.setActive(0);
-        getAlarmDB().update(alarm);
-
         AlarmManager alarmManager = this.getAlarmManager();
 
         int alarmId = alarm.getAlarmId();
@@ -222,11 +215,12 @@ class AlarmUtil {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(alarmIntent);
 
+        getAlarmDB().delete(alarm.getId());
+
         this.setBootReceiver();
     }
 
-    Calendar getCalendarFromAlarm(AlarmModel alarm)
-    {
+    Calendar getCalendarFromAlarm(AlarmModel alarm) {
         Calendar calendar = new GregorianCalendar();
         calendar.set(Calendar.HOUR_OF_DAY, alarm.getHour());
         calendar.set(Calendar.MINUTE, alarm.getMinute());
@@ -237,9 +231,7 @@ class AlarmUtil {
         return calendar;
     }
 
-    void setAlarmFromCalendar(AlarmModel alarm, Calendar calendar)
-    {
-
+    void setAlarmFromCalendar(AlarmModel alarm, Calendar calendar) {
         alarm.setSecond(calendar.get(Calendar.SECOND));
         alarm.setMinute(calendar.get(Calendar.MINUTE));
         alarm.setHour(calendar.get(Calendar.HOUR_OF_DAY));
@@ -329,9 +321,9 @@ class AlarmUtil {
 
             Bundle bundle = new Bundle();
             if (alarm.getData() != null && !alarm.getData().equals("")) {
-                String [] datum = alarm.getData().split(";;");
+                String[] datum = alarm.getData().split(";;");
                 for (String item : datum) {
-                    String [] data = item.split("==>");
+                    String[] data = item.split("==>");
                     bundle.putString(data[0], data[1]);
                 }
 
@@ -370,7 +362,7 @@ class AlarmUtil {
 
             mBuilder.setContentIntent(pendingIntent);
 
-            if(alarm.isHasButton()){
+            if (alarm.isHasButton()) {
                 Intent dismissIntent = new Intent(mContext, AlarmReceiver.class);
                 dismissIntent.setAction(NOTIFICATION_ACTION_DISMISS);
                 dismissIntent.putExtra("AlarmId", alarm.getId());
@@ -387,7 +379,7 @@ class AlarmUtil {
             }
 
             //use big text
-            if(alarm.isUseBigText()){
+            if (alarm.isUseBigText()) {
                 mBuilder = mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
             }
 
@@ -435,8 +427,13 @@ class AlarmUtil {
         }
     }
 
-    void removeFiredNotification(int notificationId) {
-        getNotificationManager().cancel(notificationId);
+    void removeFiredNotification(int id) {
+        try {
+            AlarmModel alarm = getAlarmDB().getAlarm(id);
+            getNotificationManager().cancel(alarm.getAlarmId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     void removeAllFiredNotifications() {

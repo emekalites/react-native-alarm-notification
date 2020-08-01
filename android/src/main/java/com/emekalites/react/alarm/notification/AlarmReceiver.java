@@ -35,8 +35,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                         String scheduleType = alarm.getScheduleType();
                         if (scheduleType.equals("once")) {
-                            alarm.setActive(0);
-                            alarmDB.update(alarm);
+                            alarmDB.delete(alarm.getId());
                         }
 
                         ArrayList<AlarmModel> alarms = alarmDB.getAlarmList(1);
@@ -65,7 +64,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             Log.e(TAG, "alarm snoozed: " + alarm.toString());
 
                             alarmUtil.stopAlarmSound();
-                            alarmUtil.removeFiredNotification(alarm.getAlarmId());
+                            alarmUtil.removeFiredNotification(alarm.getId());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -76,14 +75,15 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                         try {
                             alarm = alarmDB.getAlarm(id);
-                            alarmUtil.cancelAlarm(alarm);
                             Log.e(TAG, "alarm cancelled: " + alarm.toString());
 
                             // emit notification dismissed
-                            ANModule.getReactAppContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationDismissed", "{\"id\": \"" + alarm.getAlarmId() + "\"}");
+                            ANModule.getReactAppContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationDismissed", "{\"id\": \"" + alarm.getId() + "\"}");
 
                             alarmUtil.stopAlarmSound();
-                            alarmUtil.removeFiredNotification(alarm.getAlarmId());
+                            alarmUtil.removeFiredNotification(alarm.getId());
+                            
+                            alarmUtil.cancelAlarm(alarm);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

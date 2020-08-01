@@ -13,8 +13,8 @@ public class AlarmBootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-            Log.e(TAG, "app killed or rebooted");
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+            Log.i(TAG, "Rescheduling after boot!");
             final AlarmDatabase alarmDB = new AlarmDatabase(context);
             ArrayList<AlarmModel> alarms = alarmDB.getAlarmList(1);
 

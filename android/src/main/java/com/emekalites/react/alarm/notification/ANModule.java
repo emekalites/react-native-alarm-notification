@@ -29,6 +29,8 @@ public class ANModule extends ReactContextBaseJavaModule {
     private AlarmUtil alarmUtil;
     private static ReactApplicationContext mReactContext;
 
+    private static final String E_SCHEDULE_ALARM_FAILED = "E_SCHEDULE_ALARM_FAILED";
+
     ANModule(ReactApplicationContext reactContext) {
         super(reactContext);
         mReactContext = reactContext;
@@ -49,10 +51,12 @@ public class ANModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void scheduleAlarm(ReadableMap details) throws ParseException {
+    public void scheduleAlarm(ReadableMap details, Promise promise) throws ParseException {
         Bundle bundle = Arguments.toBundle(details);
 
         AlarmModel alarm = new AlarmModel();
+
+        alarm.setAlarmId((int) System.currentTimeMillis());
 
         alarm.setActive(1);
         alarm.setAutoCancel(bundle.getBoolean("auto_cancel", true));
@@ -80,28 +84,15 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setVibration((int)bundle.getDouble("vibration", 100.0));
         alarm.setUseBigText(bundle.getBoolean("use_big_text", false));
 
-        try {
-            int alarmId = Integer.parseInt(bundle.getString("alarm_id"));
-            if (alarmId <= 0) {
-                alarmId = (int) System.currentTimeMillis();
-            }
-            alarm.setAlarmId(alarmId);
-        } catch (Exception e) {
-            alarm.setAlarmId((int) System.currentTimeMillis());
-        }
-
         String datetime = bundle.getString("fire_date");
-        if (datetime == null || datetime.equals("")) {
-            Log.e(TAG, "failed to schedule notification because fire date is missing");
-            return;
-        }
-
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
         Calendar calendar = new GregorianCalendar();
+        
         calendar.setTime(sdf.parse(datetime));
 
         alarmUtil.setAlarmFromCalendar(alarm, calendar);
 
+        // check if alarm has been set at this time
         boolean containAlarm = alarmUtil.checkAlarm(getAlarmDB().getAlarmList(1), alarm);
         if (!containAlarm) {
             try {
@@ -109,15 +100,23 @@ public class ANModule extends ReactContextBaseJavaModule {
                 alarm.setId(id);
 
                 alarmUtil.setAlarm(alarm);
+
+                WritableMap map = Arguments.createMap();
+                map.putInt("id", id);
+
+                return promise.resolve(map);
             } catch (Exception e) {
                 e.printStackTrace();
+                promise.reject(E_SCHEDULE_ALARM_FAILED, e);
             }
+        } else {
+            promise.reject(E_SCHEDULE_ALARM_FAILED, "duplicate alarm set at date");
         }
     }
 
     @ReactMethod
-    public void deleteAlarm(String alarmID) {
-        alarmUtil.doCancelAlarm(alarmID.toString());
+    public void deleteAlarm(int alarmID) {
+        alarmUtil.doCancelAlarm(alarmID);
     }
 
     @ReactMethod
@@ -130,6 +129,8 @@ public class ANModule extends ReactContextBaseJavaModule {
         Bundle bundle = Arguments.toBundle(details);
 
         AlarmModel alarm = new AlarmModel();
+
+        alarm.setAlarmId((int) System.currentTimeMillis());
 
         alarm.setActive(1);
         alarm.setAutoCancel(bundle.getBoolean("auto_cancel", true));
@@ -156,44 +157,25 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setHasButton(bundle.getBoolean("has_button", false));
         alarm.setVibration((int)bundle.getDouble("vibration", 100));
         alarm.setUseBigText(bundle.getBoolean("use_big_text", false));
-        
-        String datetime = bundle.getString("fire_date");
-        if (datetime == null || datetime.equals("")) {
-            Log.e(TAG, "failed to schedule notification because fire date is missing");
-            return;
-        }
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
         Calendar calendar = new GregorianCalendar();
-        calendar.setTime(sdf.parse(datetime));
 
         alarmUtil.setAlarmFromCalendar(alarm, calendar);
-
-        try {
-            int alarmId = Integer.parseInt(bundle.getString("alarm_id"));
-            if (alarmId <= 0) {
-                alarmId = (int) System.currentTimeMillis();
-            }
-            alarm.setAlarmId(alarmId);
-        } catch (Exception e) {
-            alarm.setAlarmId((int) System.currentTimeMillis());
-        }
 
         try {
             int id = getAlarmDB().insert(alarm);
             alarm.setId(id);
 
-            alarmUtil.setAlarm(alarm);
+            alarmUtil.sendNotification(alarm);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        alarmUtil.sendNotification(alarm);
     }
 
     @ReactMethod
-    public void removeFiredNotification(String alarm_id) {
-        alarmUtil.removeFiredNotification(Integer.parseInt(alarm_id));
+    public void removeFiredNotification(int id) {
+        alarmUtil.removeFiredNotification(id);
     }
 
     @ReactMethod
