@@ -165,7 +165,9 @@ class AlarmUtil {
 
         setAlarmFromCalendar(alarm, calendar);
 
-        alarm.setAlarmId((int) System.currentTimeMillis());
+        long time = System.currentTimeMillis() / 1000;
+
+        alarm.setAlarmId((int) time);
 
         getAlarmDB().update(alarm);
 
@@ -200,24 +202,36 @@ class AlarmUtil {
     void doCancelAlarm(int id) {
         try {
             AlarmModel alarm = getAlarmDB().getAlarm(id);
-            this.cancelAlarm(alarm);
+            this.cancelAlarm(alarm, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    void cancelAlarm(AlarmModel alarm) {
-        AlarmManager alarmManager = this.getAlarmManager();
+    void deleteAlarm(int id) {
+        try {
+            AlarmModel alarm = getAlarmDB().getAlarm(id);
+            this.cancelAlarm(alarm, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-        int alarmId = alarm.getAlarmId();
+    void cancelAlarm(AlarmModel alarm, boolean delete) {
+        String scheduleType = alarm.getScheduleType();
+        if (scheduleType.equals("once") || delete) {
+            AlarmManager alarmManager = this.getAlarmManager();
 
-        Intent intent = new Intent(mContext, AlarmReceiver.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.cancel(alarmIntent);
+            int alarmId = alarm.getAlarmId();
 
-        getAlarmDB().delete(alarm.getId());
+            Intent intent = new Intent(mContext, AlarmReceiver.class);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(alarmIntent);
 
-        this.setBootReceiver();
+            getAlarmDB().delete(alarm.getId());
+
+            this.setBootReceiver();
+        }
     }
 
     Calendar getCalendarFromAlarm(AlarmModel alarm) {
@@ -344,7 +358,7 @@ class AlarmUtil {
                     .setCategory(NotificationCompat.CATEGORY_ALARM)
                     .setSound(null)
                     .setVibrate(null)
-                    .setDeleteIntent(createOnDismissedIntent(mContext, notificationID));
+                    .setDeleteIntent(createOnDismissedIntent(mContext, alarm.getId()));
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 String color = alarm.getColor();

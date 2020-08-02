@@ -56,7 +56,9 @@ public class ANModule extends ReactContextBaseJavaModule {
 
         AlarmModel alarm = new AlarmModel();
 
-        alarm.setAlarmId((int) System.currentTimeMillis());
+        long time = System.currentTimeMillis() / 1000;
+
+        alarm.setAlarmId((int) time);
 
         alarm.setActive(1);
         alarm.setAutoCancel(bundle.getBoolean("auto_cancel", true));
@@ -104,7 +106,7 @@ public class ANModule extends ReactContextBaseJavaModule {
                 WritableMap map = Arguments.createMap();
                 map.putInt("id", id);
 
-                return promise.resolve(map);
+                promise.resolve(map);
             } catch (Exception e) {
                 e.printStackTrace();
                 promise.reject(E_SCHEDULE_ALARM_FAILED, e);
@@ -116,7 +118,7 @@ public class ANModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void deleteAlarm(int alarmID) {
-        alarmUtil.doCancelAlarm(alarmID);
+        alarmUtil.deleteAlarm(alarmID);
     }
 
     @ReactMethod
@@ -130,7 +132,9 @@ public class ANModule extends ReactContextBaseJavaModule {
 
         AlarmModel alarm = new AlarmModel();
 
-        alarm.setAlarmId((int) System.currentTimeMillis());
+        long time = System.currentTimeMillis() / 1000;
+
+        alarm.setAlarmId((int) time);
 
         alarm.setActive(1);
         alarm.setAutoCancel(bundle.getBoolean("auto_cancel", true));

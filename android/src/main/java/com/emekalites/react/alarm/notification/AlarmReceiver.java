@@ -33,15 +33,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                         alarmUtil.sendNotification(alarm);
 
-                        String scheduleType = alarm.getScheduleType();
-                        if (scheduleType.equals("once")) {
-                            alarmDB.delete(alarm.getId());
-                        }
-
                         ArrayList<AlarmModel> alarms = alarmDB.getAlarmList(1);
                         alarmUtil.setBootReceiver();
 
-                        Log.e(TAG, "alarm start: " + alarm.toString() + ", alarms left: " + alarms.size());
+                        Log.d(TAG, "alarm start: " + alarm.toString() + ", alarms left: " + alarms.size());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -83,7 +78,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             alarmUtil.stopAlarmSound();
                             alarmUtil.removeFiredNotification(alarm.getId());
                             
-                            alarmUtil.cancelAlarm(alarm);
+                            alarmUtil.cancelAlarm(alarm, false);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
