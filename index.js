@@ -20,7 +20,7 @@ ReactNativeAN.deleteAlarm = (id) => {
 };
 
 ReactNativeAN.stopAlarmSound = () => {
-	return RNAlarmNotification.stopAlarm();
+	return RNAlarmNotification.stopAlarmSound();
 };
 
 ReactNativeAN.sendNotification = (details) => {
@@ -41,6 +41,30 @@ ReactNativeAN.removeAllFiredNotifications = () => {
 
 ReactNativeAN.getScheduledAlarms = async () => {
 	return await RNAlarmNotification.getScheduledAlarms();
+};
+
+// ios request permission
+ReactNativeAN.requestPermissions = async (permissions) => {
+	let requestedPermissions = {
+		alert: true,
+		badge: true,
+		sound: true,
+	};
+
+	if (permissions) {
+		requestedPermissions = {
+			alert: !!permissions.alert,
+			badge: !!permissions.badge,
+			sound: !!permissions.sound,
+		};
+	}
+
+	return await RNAlarmNotification.requestPermissions(requestedPermissions);
+};
+
+// ios check permission
+ReactNativeAN.checkPermissions = (callback) => {
+	RNAlarmNotification.checkPermissions(callback);
 };
 
 ReactNativeAN.parseDate = (rawDate) => {
@@ -68,5 +92,5 @@ ReactNativeAN.parseDate = (rawDate) => {
 
 	return `${day}-${month}-${rawDate.getFullYear()} ${hours}:${rawDate.getMinutes()}:${rawDate.getSeconds()}`;
 };
-  
+
 export default ReactNativeAN;

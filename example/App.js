@@ -7,6 +7,7 @@ import {
 	DeviceEventEmitter,
 	StyleSheet,
 	ToastAndroid,
+	Platform,
 } from 'react-native';
 import ReactNativeAN from 'react-native-alarm-notification';
 
@@ -48,11 +49,17 @@ class App extends Component {
 		const details = {...alarmNotifData, fire_date: fireDate};
 		console.log(`alarm set: ${fireDate}`);
 
-		const alarm = await ReactNativeAN.scheduleAlarm(details);
-		console.log(alarm);
-		this.setState({
-			update: [...update, {date: `alarm set: ${fireDate}`, id: alarm.id}],
-		});
+		try {
+			const alarm = await ReactNativeAN.scheduleAlarm(details);
+			console.log(alarm);
+			if (alarm) {
+				this.setState({
+					update: [...update, {date: `alarm set: ${fireDate}`, id: alarm.id}],
+				});
+			}
+		} catch (e) {
+			console.log(e);
+		}
 	};
 
 	setRpeatAlarm = async () => {
@@ -61,11 +68,17 @@ class App extends Component {
 		const details = {...repeatAlarmNotifData, fire_date: fireDate};
 		console.log(`alarm set: ${fireDate}`);
 
-		const alarm = await ReactNativeAN.scheduleAlarm(details);
-		console.log(alarm);
-		this.setState({
-			update: [...update, {date: `alarm set: ${fireDate}`, id: alarm.id}],
-		});
+		try {
+			const alarm = await ReactNativeAN.scheduleAlarm(details);
+			console.log(alarm);
+			if (alarm) {
+				this.setState({
+					update: [...update, {date: `alarm set: ${fireDate}`, id: alarm.id}],
+				});
+			}
+		} catch (e) {
+			console.log(e);
+		}
 	};
 
 	setFutureAlarm = async () => {
@@ -77,14 +90,20 @@ class App extends Component {
 		const details = {...alarmNotifData, fire_date};
 		console.log(`alarm set: ${fire_date}`);
 
-		const alarm = await ReactNativeAN.scheduleAlarm(details);
-		console.log(alarm);
-		this.setState({
-			update: [...update, {date: `alarm set: ${fire_date}`, id: alarm.id}],
-		});
+		try {
+			const alarm = await ReactNativeAN.scheduleAlarm(details);
+			console.log(alarm);
+			if (alarm) {
+				this.setState({
+					update: [...update, {date: `alarm set: ${fire_date}`, id: alarm.id}],
+				});
+			}
+		} catch (e) {
+			console.log(e);
+		}
 	};
 
-	stopAlarm = () => {
+	stopAlarmSound = () => {
 		ReactNativeAN.stopAlarmSound();
 	};
 
@@ -109,7 +128,30 @@ class App extends Component {
 			const obj = JSON.parse(e);
 			console.log(obj);
 		});
+
+		if (Platform.OS === 'ios') {
+			this.showPermissions();
+
+			ReactNativeAN.requestPermissions({
+				alert: true,
+				badge: true,
+				sound: true,
+			}).then(
+				(data) => {
+					console.log('PushNotificationIOS.requestPermissions', data);
+				},
+				(data) => {
+					console.log('PushNotificationIOS.requestPermissions failed', data);
+				},
+			);
+		}
 	}
+
+	showPermissions = () => {
+		ReactNativeAN.checkPermissions((permissions) => {
+			console.log(permissions);
+		});
+	};
 
 	viewAlarms = async () => {
 		const list = await ReactNativeAN.getScheduledAlarms();
@@ -188,7 +230,7 @@ class App extends Component {
 				</View>
 				<View style={styles.margin}>
 					<Button
-						onPress={this.stopAlarm}
+						onPress={this.stopAlarmSound}
 						title="Stop Alarm Sound"
 						color="#841584"
 					/>

@@ -6,6 +6,10 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8D0B4EFD24DC22BA00A18E45 /* RnAlarmNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D0B4EFB24DC22B900A18E45 /* RnAlarmNotification.m */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		58B511D91A9E6C8500147676 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -20,6 +24,8 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRnAlarmNotification.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRnAlarmNotification.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D0B4EFB24DC22B900A18E45 /* RnAlarmNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RnAlarmNotification.m; sourceTree = "<group>"; };
+		8D0B4EFC24DC22B900A18E45 /* RnAlarmNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RnAlarmNotification.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +51,8 @@
 			isa = PBXGroup;
 			children = (
 				134814211AA4EA7D00B7C361 /* Products */,
+				8D0B4EFC24DC22B900A18E45 /* RnAlarmNotification.h */,
+				8D0B4EFB24DC22B900A18E45 /* RnAlarmNotification.m */,
 			);
 			sourceTree = "<group>";
 		};
@@ -105,6 +113,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D0B4EFD24DC22BA00A18E45 /* RnAlarmNotification.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

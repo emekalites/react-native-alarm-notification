@@ -89,7 +89,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         String datetime = bundle.getString("fire_date");
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
         Calendar calendar = new GregorianCalendar();
-        
+
         calendar.setTime(sdf.parse(datetime));
 
         alarmUtil.setAlarmFromCalendar(alarm, calendar);
