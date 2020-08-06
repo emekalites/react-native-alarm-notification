@@ -258,10 +258,10 @@ ReactNativeAN.requestPermissions({
 	sound: true,
 }).then(
 	(data) => {
-		console.log('PushNotificationIOS.requestPermissions', data);
+		console.log('RnAlarmNotification.requestPermissions', data);
 	},
 	(data) => {
-		console.log('PushNotificationIOS.requestPermissions failed', data);
+		console.log('RnAlarmNotification.requestPermissions failed', data);
 	}
 );
 ```
