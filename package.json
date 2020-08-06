@@ -20,7 +20,10 @@
     "baseUrl": "https://github.com/emekalites/react-native-alarm-notification"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "alarm",
+    "notification",
+    "alarm notification"
   ],
   "author": {
     "name": "Chukwuemeka Ihedoro",
