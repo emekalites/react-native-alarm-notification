@@ -2,7 +2,6 @@
 
 [![npm version](https://badge.fury.io/js/react-native-alarm-notification.svg)](https://badge.fury.io/js/react-native-alarm-notification)
 [![npm downloads](https://img.shields.io/npm/dt/react-native-alarm-notification.svg)](https://badge.fury.io/js/react-native-alarm-notification)
-[![Buy Me A Coffee](https://img.shields.io/badge/Donate-Buy%20Me%20A%20Coffee-yellow.svg)](https://www.buymeacoffee.com/emekaihedoro)
 
 ## Installing (React Native >= 0.60.0)
 
@@ -271,9 +270,3 @@ ReactNativeAN.requestPermissions({
 This module is customized to help with scheduling and sending notifications (local) in react-native. A couple of helpful features may be missing but hopefully they can be added as time goes on.
 
 NOTE: If you need a react-native module that takes care of Firebase Cloud Messaging, you could use [react-native-firebase](https://github.com/invertase/react-native-firebase)
-
-## Help Maintenance
-I've been maintaining quite many repos these days and burning out slowly. If you could help me cheer up, buying me a cup of coffee will make my life really happy and get much energy out of it.
-<br/>
-<br/>
-<a href="https://www.buymeacoffee.com/emekaihedoro" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-orange.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;" height="41px" width="174px" ></a>
