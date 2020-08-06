@@ -155,8 +155,8 @@ class App extends Component {
 
     async method(){
         //Schedule Future Alarm
-		const alarm = await ReactNativeAN.scheduleAlarm({ ...alarmNotifData, fire_date: fireDate });
-		console.log(alarm); // { id: 1 }
+        const alarm = await ReactNativeAN.scheduleAlarm({ ...alarmNotifData, fire_date: fireDate });
+        console.log(alarm); // { id: 1 }
 
         //Delete Scheduled Alarm
         ReactNativeAN.deleteAlarm(alarm.id);
