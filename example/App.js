@@ -117,14 +117,12 @@ class App extends Component {
 	};
 
 	componentDidMount() {
-		DeviceEventEmitter.addListener('OnNotificationDismissed', async function (
-			e,
-		) {
+		DeviceEventEmitter.addListener('OnNotificationDismissed', async (e) => {
 			const obj = JSON.parse(e);
 			console.log(`Notification id: ${obj.id} dismissed`);
 		});
 
-		DeviceEventEmitter.addListener('OnNotificationOpened', async function (e) {
+		DeviceEventEmitter.addListener('OnNotificationOpened', async (e) => {
 			const obj = JSON.parse(e);
 			console.log(obj);
 		});

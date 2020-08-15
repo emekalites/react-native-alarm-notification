@@ -122,6 +122,11 @@ public class ANModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void deleteRepeatingAlarm(int alarmID) {
+        alarmUtil.deleteRepeatingAlarm(alarmID);
+    }
+
+    @ReactMethod
     public void stopAlarmSound() {
         alarmUtil.stopAlarmSound();
     }

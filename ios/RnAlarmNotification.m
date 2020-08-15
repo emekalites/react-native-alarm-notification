@@ -105,6 +105,10 @@ RCT_EXPORT_METHOD(deleteAlarm: (NSInteger *)id){
     NSLog(@"delete alarm: %li", (long) id);
 }
 
+RCT_EXPORT_METHOD(deleteRepeatingAlarm: (NSInteger *)id){
+    NSLog(@"delete alarm: %li", (long) id);
+}
+
 RCT_EXPORT_METHOD(stopAlarmSound){
     NSLog(@"stop alarm sound");
 }

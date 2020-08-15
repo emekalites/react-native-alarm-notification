@@ -19,6 +19,14 @@ ReactNativeAN.deleteAlarm = (id) => {
 	RNAlarmNotification.deleteAlarm(id);
 };
 
+ReactNativeAN.deleteRepeatingAlarm = (id) => {
+	if (!id) {
+		throw new Error('id is required to delete alarm');
+	}
+
+	RNAlarmNotification.deleteRepeatingAlarm(id);
+};
+
 ReactNativeAN.stopAlarmSound = () => {
 	return RNAlarmNotification.stopAlarmSound();
 };

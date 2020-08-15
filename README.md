@@ -161,6 +161,9 @@ class App extends Component {
         //Delete Scheduled Alarm
         ReactNativeAN.deleteAlarm(alarm.id);
 
+        //Delete Repeating Alarm
+        ReactNativeAN.deleteRepeatingAlarm();
+
         //Stop Alarm
         ReactNativeAN.stopAlarmSound();
 

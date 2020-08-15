@@ -217,21 +217,38 @@ class AlarmUtil {
         }
     }
 
+    void deleteRepeatingAlarm(int id) {
+        try {
+            AlarmModel alarm = getAlarmDB().getAlarm(id);
+            
+            String scheduleType = alarm.getScheduleType();
+            if (scheduleType.equals("repeat")) {
+                this.stopAlarm(alarm);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     void cancelAlarm(AlarmModel alarm, boolean delete) {
         String scheduleType = alarm.getScheduleType();
         if (scheduleType.equals("once") || delete) {
-            AlarmManager alarmManager = this.getAlarmManager();
-
-            int alarmId = alarm.getAlarmId();
-
-            Intent intent = new Intent(mContext, AlarmReceiver.class);
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmManager.cancel(alarmIntent);
-
-            getAlarmDB().delete(alarm.getId());
-
-            this.setBootReceiver();
+            this.stopAlarm(alarm);
         }
+    }
+
+    void stopAlarm(AlarmModel alarm) {
+        AlarmManager alarmManager = this.getAlarmManager();
+
+        int alarmId = alarm.getAlarmId();
+
+        Intent intent = new Intent(mContext, AlarmReceiver.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(alarmIntent);
+
+        getAlarmDB().delete(alarm.getId());
+
+        this.setBootReceiver();
     }
 
     Calendar getCalendarFromAlarm(AlarmModel alarm) {
