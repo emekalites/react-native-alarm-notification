@@ -2,7 +2,6 @@ package com.emekalites.react.alarm.notification;
 
 import android.app.Application;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -68,7 +67,7 @@ public class ANModule extends ReactContextBaseJavaModule {
         Bundle data = bundle.getBundle("data");
         alarm.setData(bundle2string(data));
 
-        alarm.setInterval((int)bundle.getDouble("repeat_interval", 1.0));
+        alarm.setInterval(bundle.getString("repeat_interval", "hourly"));
         alarm.setLargeIcon(bundle.getString("large_icon", ""));
         alarm.setLoopSound(bundle.getBoolean("loop_sound", false));
         alarm.setMessage(bundle.getString("message", "My Notification Message"));
@@ -85,6 +84,9 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setHasButton(bundle.getBoolean("has_button", false));
         alarm.setVibration((int)bundle.getDouble("vibration", 100.0));
         alarm.setUseBigText(bundle.getBoolean("use_big_text", false));
+        alarm.setVolume(bundle.getDouble("volume", 0.5));
+        alarm.setIntervalValue((int)bundle.getDouble("interval_value", 1));
+        alarm.setBypassDnd(bundle.getBoolean("bypass_dnd", false));
 
         String datetime = bundle.getString("fire_date");
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
@@ -149,12 +151,10 @@ public class ANModule extends ReactContextBaseJavaModule {
         Bundle data = bundle.getBundle("data");
         alarm.setData(bundle2string(data));
 
-        alarm.setInterval((int)bundle.getDouble("repeat_interval", 1));
         alarm.setLargeIcon(bundle.getString("large_icon"));
         alarm.setLoopSound(bundle.getBoolean("loop_sound", false));
         alarm.setMessage(bundle.getString("message", "My Notification Message"));
         alarm.setPlaySound(bundle.getBoolean("play_sound", true));
-        alarm.setScheduleType(bundle.getString("schedule_type", "once"));
         alarm.setSmallIcon(bundle.getString("small_icon", "ic_launcher"));
         alarm.setSnoozeInterval((int)bundle.getDouble("snooze_interval", 1));
         alarm.setSoundName(bundle.getString("sound_name"));
@@ -166,8 +166,9 @@ public class ANModule extends ReactContextBaseJavaModule {
         alarm.setHasButton(bundle.getBoolean("has_button", false));
         alarm.setVibration((int)bundle.getDouble("vibration", 100));
         alarm.setUseBigText(bundle.getBoolean("use_big_text", false));
+        alarm.setVolume(bundle.getDouble("volume", 0.5));
+        alarm.setBypassDnd(bundle.getBoolean("bypass_dnd", false));
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
         Calendar calendar = new GregorianCalendar();
 
         alarmUtil.setAlarmFromCalendar(alarm, calendar);

@@ -8,6 +8,20 @@ ReactNativeAN.scheduleAlarm = async (details) => {
 		throw new Error('failed to schedule alarm because fire date is missing');
 	}
 
+	const repeatInterval = details.repeat_interval || 'hourly';
+	const intervalValue = details.interval_value || 1;
+	if(isNaN(intervalValue)) {
+		throw new Error('interval value should be a number');
+	}
+
+	if(repeatInterval === 'minutely' && (intervalValue < 1 || intervalValue > 59)) {
+		throw new Error('interval value should be between 1 and 59 minutes');
+	}
+
+	if(repeatInterval === 'hourly' && (intervalValue < 1 || intervalValue > 23)) {
+		throw new Error('interval value should be between 1 and 23 hours');
+	}
+
 	return await RNAlarmNotification.scheduleAlarm(details);
 };
 

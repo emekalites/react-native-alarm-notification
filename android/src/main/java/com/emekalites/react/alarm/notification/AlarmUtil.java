@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
@@ -44,7 +45,7 @@ class AlarmUtil {
 
     private Context mContext;
     private AudioInterface audioInterface;
-    private static final long DEFAULT_VIBRATION = 100;
+    static final long[] DEFAULT_VIBRATE_PATTERN = {0, 250, 250, 250};
 
     AlarmUtil(Application context) {
         mContext = context;
@@ -78,9 +79,12 @@ class AlarmUtil {
         return (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    private void playAlarmSound(String name, String names, boolean shouldLoop) {
+    private void playAlarmSound(String name, String names, boolean shouldLoop, double volume) {
+        float number = (float) volume;
+
         MediaPlayer mediaPlayer = audioInterface.getSingletonMedia(name, names);
         mediaPlayer.setLooping(shouldLoop);
+        mediaPlayer.setVolume(number, number);
         mediaPlayer.start();
 
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -148,7 +152,9 @@ class AlarmUtil {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             }
         } else if (scheduleType.equals("repeat")) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarm.getInterval() * 1000, alarmIntent);
+            long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
         } else {
             Log.d(TAG, "Schedule type should either be once or repeat");
             return;
@@ -193,10 +199,33 @@ class AlarmUtil {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             }
         } else if (scheduleType.equals("repeat")) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarm.getInterval() * 1000, alarmIntent);
+            long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
         } else {
             Log.d(TAG, "Schedule type should either be once or repeat");
         }
+    }
+
+    long getInterval(String interval, int value) {
+        long duration = 1;
+
+        switch (interval) {
+            case "minutely":
+                duration = value;
+                break;
+            case "hourly":
+                duration = 60 * value;
+                break;
+            case "daily":
+                duration = 60 * 24;
+                break;
+            case "weekly":
+                duration = 60 * 24 * 7;
+                break;
+        }
+
+        return duration * 60 * 1000;
     }
 
     void doCancelAlarm(int id) {
@@ -220,7 +249,7 @@ class AlarmUtil {
     void deleteRepeatingAlarm(int id) {
         try {
             AlarmModel alarm = getAlarmDB().getAlarm(id);
-            
+
             String scheduleType = alarm.getScheduleType();
             if (scheduleType.equals("repeat")) {
                 this.stopAlarm(alarm);
@@ -301,6 +330,7 @@ class AlarmUtil {
     void sendNotification(AlarmModel alarm) {
         try {
             Class intentClass = getMainActivityClass();
+
             if (intentClass == null) {
                 Log.e(TAG, "No activity class found for the notification");
                 return;
@@ -308,7 +338,7 @@ class AlarmUtil {
 
             boolean playSound = alarm.isPlaySound();
             if (playSound) {
-                this.playAlarmSound(alarm.getSoundName(), alarm.getSoundNames(), alarm.isLoopSound());
+                this.playAlarmSound(alarm.getSoundName(), alarm.getSoundNames(), alarm.isLoopSound(), alarm.getVolume());
             }
 
             NotificationManager mNotificationManager = getNotificationManager();
@@ -368,27 +398,53 @@ class AlarmUtil {
                     .setContentTitle(title)
                     .setContentText(message)
                     .setTicker(alarm.getTicker())
-                    .setDefaults(NotificationCompat.DEFAULT_ALL)
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setAutoCancel(alarm.isAutoCancel())
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setCategory(NotificationCompat.CATEGORY_ALARM)
                     .setSound(null)
-                    .setVibrate(null)
                     .setDeleteIntent(createOnDismissedIntent(mContext, alarm.getId()));
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                String color = alarm.getColor();
+            long vibration = (long) alarm.getVibration();
 
-                NotificationChannel mChannel = new NotificationChannel(channelID, "alarmnotif", NotificationManager.IMPORTANCE_HIGH);
+            long[] vibrationPattern = vibration == 0 ? DEFAULT_VIBRATE_PATTERN : new long[]{0, vibration, 1000, vibration};
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel mChannel = new NotificationChannel(channelID, "Alarm Notify", NotificationManager.IMPORTANCE_HIGH);
                 mChannel.enableLights(true);
-                mChannel.enableVibration(alarm.isVibrate());
+
+                String color = alarm.getColor();
                 if (color != null && !color.equals("")) {
                     mChannel.setLightColor(Color.parseColor(color));
                 }
-                mChannel.setVibrationPattern(new long[]{1000, 2000});
+
+                if(!mChannel.canBypassDnd()){
+                    mChannel.setBypassDnd(alarm.isBypassDnd());
+                }
+
+                mChannel.setVibrationPattern(null);
+
+                // play vibration
+                if (alarm.isVibrate()) {
+                    Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                    if (vibrator.hasVibrator()) {
+                        vibrator.vibrate(VibrationEffect.createWaveform(vibrationPattern, 0));
+                    }
+                }
+
                 mNotificationManager.createNotificationChannel(mChannel);
                 mBuilder.setChannelId(channelID);
+            } else {
+                // set vibration
+                mBuilder.setVibrate(alarm.isVibrate() ? vibrationPattern : null);
+            }
+
+            //color
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                String color = alarm.getColor();
+                if (color != null && !color.equals("")) {
+                    mBuilder.setColor(Color.parseColor(color));
+                }
             }
 
             mBuilder.setContentIntent(pendingIntent);
@@ -416,31 +472,12 @@ class AlarmUtil {
 
             //large icon
             String largeIcon = alarm.getLargeIcon();
-            if (largeIcon != null && !largeIcon.equals("") && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            if (largeIcon != null && !largeIcon.equals("") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 int largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
                 Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
                 if (largeIconResId != 0) {
                     mBuilder.setLargeIcon(largeIconBitmap);
                 }
-            }
-
-            //color
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                String color = alarm.getColor();
-                if (color != null && !color.equals("")) {
-                    mBuilder.setColor(Color.parseColor(color));
-                }
-            }
-
-            //vibrate
-            boolean vibrate = alarm.isVibrate();
-            if (vibrate) {
-                long vibration = (long) alarm.getVibration();
-                if (vibration == 0)
-                    vibration = DEFAULT_VIBRATION;
-                Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-                assert vibrator != null;
-                vibrator.vibrate(vibration);
             }
 
             // set tag and push notification

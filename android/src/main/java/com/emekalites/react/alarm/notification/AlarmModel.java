@@ -28,13 +28,16 @@ public class AlarmModel implements Serializable {
     private String soundNames;                 // separate sounds with comma eg (sound1.mp3,sound2.mp3)
     private String color = "red";
     private String scheduleType = "once";      // once or repeat
-    private int interval = 1;                       // in minutes
+    private String interval = "hourly";                       // hourly, daily, weekly
+    private int intervalValue  = 1;
     private int snoozeInterval = 1;                       // in minutes
     private String tag;
     private String data;
     private boolean loopSound = false;
     private boolean useBigText = false;
     private boolean hasButton = false;
+    private double volume = 0.5;
+    private boolean bypassDnd = false;
 
     private int active = 1;         // 1 = yes, 0 = no
 
@@ -214,12 +217,20 @@ public class AlarmModel implements Serializable {
         this.scheduleType = scheduleType;
     }
 
-    public int getInterval() {
+    public String getInterval() {
         return interval;
     }
 
-    public void setInterval(int interval) {
+    public void setInterval(String interval) {
         this.interval = interval;
+    }
+
+    public int getIntervalValue() {
+        return intervalValue;
+    }
+
+    public void setIntervalValue(int intervalValue) {
+        this.intervalValue = intervalValue;
     }
 
     public String getTag() {
@@ -278,6 +289,26 @@ public class AlarmModel implements Serializable {
         this.hasButton = hasButton;
     }
 
+    public double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(double volume) {
+        if (volume > 1 || volume < 0) {
+            this.volume = 0.5;
+        } else {
+            this.volume = volume;
+        }
+    }
+
+    public boolean isBypassDnd() {
+        return bypassDnd;
+    }
+
+    public void setBypassDnd(boolean bypassDnd) {
+        this.bypassDnd = bypassDnd;
+    }
+
     @Override
     public String toString() {
         return "AlarmModel{" +
@@ -304,12 +335,15 @@ public class AlarmModel implements Serializable {
                 ", color='" + color + '\'' +
                 ", scheduleType='" + scheduleType + '\'' +
                 ", interval=" + interval +
+                ", intervalValue=" + intervalValue +
                 ", snoozeInterval=" + snoozeInterval +
                 ", tag='" + tag + '\'' +
                 ", data='" + data + '\'' +
                 ", loopSound=" + loopSound +
                 ", useBigText=" + useBigText +
                 ", hasButton=" + hasButton +
+                ", volume=" + volume +
+                ", bypassDnd=" + bypassDnd +
                 ", active=" + active +
                 '}';
     }

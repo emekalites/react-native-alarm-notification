@@ -28,11 +28,12 @@ const repeatAlarmNotifData = {
 	message: 'Stand up',
 	vibrate: true,
 	play_sound: true,
-	schedule_type: 'repeat',
 	channel: 'wakeup',
 	data: {content: 'my notification id is 22'},
 	loop_sound: true,
-	repeat_interval: 1, // repeat after 1 minute
+	schedule_type: 'repeat',
+	repeat_interval: 'minutely',
+	interval_value: 5, // repeat after 5 minutes
 };
 
 class App extends Component {
