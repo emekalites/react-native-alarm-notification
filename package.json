@@ -1,7 +1,7 @@
 {
   "name": "react-native-alarm-notification",
   "title": "React Native Alarm Notification",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "schedule alarm with notification in react-native",
   "main": "index.js",
   "files": [
