@@ -509,7 +509,11 @@ class AlarmUtil {
     }
 
     void stopAlarmSound() {
-        Log.e(TAG, "stop alarm sound");
+        Log.e(TAG, "stop vibration and alarm sound");
+        Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator.hasVibrator()) {
+            vibrator.cancel();
+        }
         audioInterface.stopPlayer();
     }
 
