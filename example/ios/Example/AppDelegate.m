@@ -58,7 +58,7 @@ static void InitializeFlipper(UIApplication *application) {
        willPresentNotification:(UNNotification *)notification withCompletionHandler: (void (^)(UNNotificationPresentationOptions options))completionHandler {
   NSLog(@"handle push notification: %@", notification.request.content.userInfo);
   [RnAlarmNotification didReceiveNotification:notification];
-  completionHandler(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
+  completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert);
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center

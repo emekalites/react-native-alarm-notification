@@ -226,11 +226,11 @@ class App extends Component {
 							/>
 						</View>
 					</View>
-					<View style={styles.margin}>
+					<View>
 						<Button onPress={this.setAlarm} title="Set Alarm" color="#007fff" />
 					</View>
 				</View>
-				<View>
+				<View style={styles.margin}>
 					<Text>Alarm Time From Now (in minutes):</Text>
 					<TextInput
 						style={styles.date}
