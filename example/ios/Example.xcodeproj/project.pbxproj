@@ -18,6 +18,7 @@
 		34136AEAED8B236014F3C34D /* libPods-example-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE3D780CBD8449AB1BF8B93 /* libPods-example-tvOSTests.a */; };
 		55E531FEDF51C367AE0E4F8B /* libPods-example-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C02307FED028E6E5BE1CD47C /* libPods-example-tvOS.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8D5BBB97250E4F14009404D8 /* iphone_ringtone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8D5BBB96250E4F13009404D8 /* iphone_ringtone.mp3 */; };
 		8DB38BFA1D63BA2D64EE4A90 /* libPods-example-exampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B997C7C06F13D4CAAC4D5F4A /* libPods-example-exampleTests.a */; };
 		EEAE4F8EBA9F12EFD6CFE116 /* libPods-example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F23A7AA2F20D21195D04C241 /* libPods-example.a */; };
 /* End PBXBuildFile section */
@@ -58,6 +59,7 @@
 		7986323D65B643FEF75D0DF8 /* Pods-example-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-example-tvOSTests/Pods-example-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = example/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		88A9323852B8BDCD2DF18D24 /* Pods-example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example.release.xcconfig"; path = "Target Support Files/Pods-example/Pods-example.release.xcconfig"; sourceTree = "<group>"; };
+		8D5BBB96250E4F13009404D8 /* iphone_ringtone.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = iphone_ringtone.mp3; sourceTree = "<group>"; };
 		9EF8456279A91E4F987A3E10 /* Pods-example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example.debug.xcconfig"; path = "Target Support Files/Pods-example/Pods-example.debug.xcconfig"; sourceTree = "<group>"; };
 		AAE3D780CBD8449AB1BF8B93 /* libPods-example-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-example-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B997C7C06F13D4CAAC4D5F4A /* libPods-example-exampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-example-exampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -125,6 +127,7 @@
 		13B07FAE1A68108700A75B9A /* example */ = {
 			isa = PBXGroup;
 			children = (
+				8D5BBB96250E4F13009404D8 /* iphone_ringtone.mp3 */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -293,6 +296,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = 7Z3J9QWS6Q;
 						LastSwiftMigration = 1120;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -341,6 +345,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				8D5BBB97250E4F14009404D8 /* iphone_ringtone.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -655,7 +660,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 7Z3J9QWS6Q;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -679,7 +684,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 7Z3J9QWS6Q;
 				INFOPLIST_FILE = example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (

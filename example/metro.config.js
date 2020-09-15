@@ -12,6 +12,11 @@
 
 const path = require('path')
 
+const watchFolders = [
+  path.resolve(__dirname + "/.."),
+  path.resolve(__dirname + "/"),
+];
+
 module.exports = {
   // workaround for an issue with symlinks encountered starting with
   // metro@0.55 / React Native 0.61
@@ -23,6 +28,16 @@ module.exports = {
     )
   },
 
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        // this defeats the RCTDeviceEventEmitter is not a registered callable module
+        inlineRequires: true,
+      },
+    }),
+  },
+
   // quick workaround for another issue with symlinks
-  watchFolders: ['.', '..']
+  // watchFolders: ['.', '..']
+  watchFolders
 }

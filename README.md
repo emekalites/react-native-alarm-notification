@@ -19,6 +19,12 @@ For iOS pod installation:
 npx pod-install
 ```
 
+or 
+
+```bash
+cd ios && pod install
+```
+
 For android, the package will be linked automatically on build.
 
 **_ IMPORTANT _**
@@ -58,11 +64,79 @@ Use `react-native link` to add the library to your project:
 react-native link react-native-alarm-notification
 ```
 
-**NOTE: For Android, you will have to update your AndroidManifest.xml (as below) in order to use Scheduled Notifications.**
+## iOS manual Installation
+
+**> In your `AppDelegate.h`**
+
+Add at the top of the file:
+
+```objective-c
+#import <UserNotifications/UNUserNotificationCenter.h>
+```
+
+Then, add the 'UNUserNotificationCenterDelegate' to protocols:
+
+```diff
+- @interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
++ @interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate, UNUserNotificationCenterDelegate>
+```
+
+**> In your `AppDelegate.m`**
+
+Add at the top of the file:
+
+```objective-c
+#import <RnAlarmNotification.h>
+#import <UserNotifications/UNUserNotificationCenter.h>
+```
+
+Then, add the following lines:
+
+```objective-c
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification withCompletionHandler: (void (^)(UNNotificationPresentationOptions options))completionHandler {
+  [RnAlarmNotification didReceiveNotification:notification];
+  completionHandler(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
+}
+
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler  API_AVAILABLE(ios(10.0)){
+    [RnAlarmNotification didReceiveNotificationResponse:response];
+    completionHandler();
+}
+```
+
+And then in your AppDelegate implementation, add the following:
+
+```objective-c
+@implementation AppDelegate
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  ...
+  
+  // Define UNUserNotificationCenter
+  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+  center.delegate = self;
+  
+  return YES;
+}
+```
+
+To play sound in the background, make sure to add the following to the `Info.plist` file.
+
+```Info.plist
+<key>UIBackgroundModes</key>
+<array>
+    <string>audio</string>
+</array>
+```
 
 ## Android manual Installation
 
-In your `AndroidManifest.xml`
+**> In your `AndroidManifest.xml`**
 
 ```xml
     .....
@@ -121,8 +195,8 @@ In your `AndroidManifest.xml`
 | **`interval_value`**             | Set interval_value if repeat_interval is minutely and hourly. `[number]`                                                                                                                                                                                                                                        | `1`                         |
 | **`small_icon`**                  | **Required:** Set the small icon resource, which will be used to represent the notification in the status bar. eg `"ic_launcher"`. PS: make sure to add the file in your mipmap folders `[project_root]/android/app/src/main/res/mipmap*`                                                                               | `"ic_launcher"`             |
 | **`snooze_interval`**             | Interval set to show alarm after snooze button is tapped. `[number]` in minutes                                                                                                                                                                                                                                         | `1`                         |
-| **`sound_name`**                  | Set audio file to play when alarm is triggered. example `"sound_name.mp3"` or `"sound_name"`. PS: make sure to add the file in your res/raw folder `[project_root]/android/app/src/main/res/raw`                                                                                                                        | _None_                      |
-| **`sound_names`**                 | Set multiple audio files to play when alarm is triggered, each file will be picked to play at random. Separate files with a comma (`,`) example `"sound_name1.mp3,sound_name2.mp3"` or `"sound_name1,sound_name2"`. PS: make sure to add the files in your res/raw folder `[project_root]/android/app/src/main/res/raw` | _None_                      |
+| **`sound_name`**                  | Set audio file to play when alarm is triggered. example `"sound_name.mp3"`. Add the file in your res/raw folder `[project_root]/android/app/src/main/res/raw/` for android and in your ios folder `[project_root]/ios/` for iOS. PS: After adding file in your iOS folder, open your application in xcode and drag your audio file into your project.                                                                                                                          | _None_                      |
+| **`sound_names`**                 | Set multiple audio files to play when alarm is triggered, each file will be picked to play at random. Separate files with a comma (`,`) example `"sound_name1.mp3,sound_name2.mp3"`. PS: make sure to add the files in your res/raw folder `[project_root]/android/app/src/main/res/raw/` | _None_                      |
 | **`tag`**                         | Add a tag id to notification.                                                                                                                                                                                                                                                                                           | _None_                      |
 | **`ticker`**                      | Set the "ticker" text which is sent to accessibility services.. `[String]`                                                                                                                                                                                                                                              | _None_                      |
 | **`title`**                       | **Required:** Add a title to notification.                                                                                                                                                                                                                                                                              | `"My Notification Title"`   |
@@ -222,29 +296,25 @@ public class MainActivity extends ReactActivity {
 
 ## Listener for notifications
 
-**NOTE: You can add a function here to go off after notification is opened or dismissed. Please remember to import DeviceEventEmitter**
-
 ```js
-import { DeviceEventEmitter } from 'react-native';
-```
+import { NativeEventEmitter, NativeModules } from 'react-native';
 
-```js
-componentDidMount() {
-	DeviceEventEmitter.addListener('OnNotificationDismissed', async function(e) {
-		const obj = JSON.parse(e);
-		console.log(obj);
-	});
+const { RNAlarmNotification } = NativeModules;
+const RNAlarmEmitter = new NativeEventEmitter(RNAlarmNotification);
 
-	DeviceEventEmitter.addListener('OnNotificationOpened', async function(e) {
-		const obj = JSON.parse(e);
-		console.log(obj);
-	});
-}
+const dismissSubscription = RNAlarmEmitter.addListener(
+    'OnNotificationDismissed', (data) => console.log(JSON.parse(e));
+);
 
-componentWillUnmount() {
-	DeviceEventEmitter.removeListener('OnNotificationDismissed');
-	DeviceEventEmitter.removeListener('OnNotificationOpened');
-}
+const openedSubscription = RNAlarmEmitter.addListener(
+    'OnNotificationOpened', (data) => console.log(JSON.parse(e));
+);
+
+...
+
+// unsubscribe, typically in componentWillUnmount
+dismissSubscription.remove();
+openedSubscription.remove();
 ```
 
 ## iOS Permissions

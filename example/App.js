@@ -4,12 +4,16 @@ import {
 	Text,
 	Button,
 	TextInput,
-	DeviceEventEmitter,
 	StyleSheet,
 	ToastAndroid,
 	Platform,
+	NativeEventEmitter,
+	NativeModules,
 } from 'react-native';
 import ReactNativeAN from 'react-native-alarm-notification';
+
+const {RNAlarmNotification} = NativeModules;
+const RNEmitter = new NativeEventEmitter(RNAlarmNotification);
 
 const alarmNotifData = {
 	title: 'Alarm',
@@ -37,10 +41,13 @@ const repeatAlarmNotifData = {
 };
 
 class App extends Component {
+	_subscribeOpen;
+	_subscribeDismiss;
+
 	state = {
 		fireDate: ReactNativeAN.parseDate(new Date(Date.now())),
 		update: [],
-		futureFireDate: '1000',
+		futureFireDate: '1',
 		alarmId: null,
 	};
 
@@ -63,18 +70,24 @@ class App extends Component {
 		}
 	};
 
-	setRpeatAlarm = async () => {
-		const {fireDate, update} = this.state;
+	setFutureRpeatAlarm = async () => {
+		const {futureFireDate, update} = this.state;
 
-		const details = {...repeatAlarmNotifData, fire_date: fireDate};
-		console.log(`alarm set: ${fireDate}`);
+		const _seconds = parseInt(futureFireDate, 10) * 60 * 1000;
+		const fire_date = ReactNativeAN.parseDate(new Date(Date.now() + _seconds));
+
+		const details = {
+			...repeatAlarmNotifData,
+			fire_date,
+		};
+		console.log(`alarm set: ${fire_date}`);
 
 		try {
 			const alarm = await ReactNativeAN.scheduleAlarm(details);
 			console.log(alarm);
 			if (alarm) {
 				this.setState({
-					update: [...update, {date: `alarm set: ${fireDate}`, id: alarm.id}],
+					update: [...update, {date: `alarm set: ${fire_date}`, id: alarm.id}],
 				});
 			}
 		} catch (e) {
@@ -85,10 +98,14 @@ class App extends Component {
 	setFutureAlarm = async () => {
 		const {futureFireDate, update} = this.state;
 
-		const fire_date = ReactNativeAN.parseDate(
-			new Date(Date.now() + parseInt(futureFireDate, 10)),
-		);
-		const details = {...alarmNotifData, fire_date};
+		const _seconds = parseInt(futureFireDate, 10) * 60 * 1000;
+		const fire_date = ReactNativeAN.parseDate(new Date(Date.now() + _seconds));
+
+		const details = {
+			...alarmNotifData,
+			fire_date,
+			sound_name: 'iphone_ringtone.mp3',
+		};
 		console.log(`alarm set: ${fire_date}`);
 
 		try {
@@ -112,22 +129,32 @@ class App extends Component {
 		const details = {
 			...alarmNotifData,
 			data: {content: 'my notification id is 45'},
+			sound_name: 'iphone_ringtone.mp3',
+			volume: 0.9,
 		};
 		console.log(details);
 		ReactNativeAN.sendNotification(details);
 	};
 
 	componentDidMount() {
-		DeviceEventEmitter.addListener('OnNotificationDismissed', async (e) => {
-			const obj = JSON.parse(e);
-			console.log(`Notification id: ${obj.id} dismissed`);
-		});
+		this._subscribeDismiss = RNEmitter.addListener(
+			'OnNotificationDismissed',
+			(data) => {
+				const obj = JSON.parse(data);
+				console.log(`notification id: ${obj.id} dismissed`);
+			},
+		);
 
-		DeviceEventEmitter.addListener('OnNotificationOpened', async (e) => {
-			const obj = JSON.parse(e);
-			console.log(obj);
-		});
+		this._subscribeOpen = RNEmitter.addListener(
+			'OnNotificationOpened',
+			(data) => {
+				console.log(data);
+				const obj = JSON.parse(data);
+				console.log(`app opened by notification: ${obj.id}`);
+			},
+		);
 
+		// check ios permissions
 		if (Platform.OS === 'ios') {
 			this.showPermissions();
 
@@ -146,6 +173,11 @@ class App extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		this._subscribeDismiss.remove();
+		this._subscribeOpen.remove();
+	}
+
 	showPermissions = () => {
 		ReactNativeAN.checkPermissions((permissions) => {
 			console.log(permissions);
@@ -155,6 +187,7 @@ class App extends Component {
 	viewAlarms = async () => {
 		const list = await ReactNativeAN.getScheduledAlarms();
 
+		console.log(list);
 		const update = list.map((l) => ({
 			date: `alarm: ${l.day}-${l.month}-${l.year} ${l.hour}:${l.minute}:${l.second}`,
 			id: l.id,
@@ -178,33 +211,32 @@ class App extends Component {
 		}
 	};
 
-	componentWillUnmount() {
-		DeviceEventEmitter.removeListener('OnNotificationDismissed');
-		DeviceEventEmitter.removeListener('OnNotificationOpened');
-	}
-
 	render() {
 		const {update, fireDate, futureFireDate, alarmId} = this.state;
 		return (
 			<View style={styles.wrapper}>
-				<Text>Alarm Date (01-01-1976 00:00:00)</Text>
 				<View>
-					<TextInput
-						style={styles.date}
-						onChangeText={(text) => this.setState({fireDate: text})}
-						value={fireDate}
-					/>
+					<View>
+						<Text>Alarm Date in the future (example 01-01-2022 00:00:00)</Text>
+						<View>
+							<TextInput
+								style={styles.date}
+								onChangeText={(text) => this.setState({fireDate: text})}
+								value={fireDate}
+							/>
+						</View>
+					</View>
+					<View style={styles.margin}>
+						<Button onPress={this.setAlarm} title="Set Alarm" color="#007fff" />
+					</View>
 				</View>
 				<View>
-					<Text>Alarm Time From Now (eg 5):</Text>
+					<Text>Alarm Time From Now (in minutes):</Text>
 					<TextInput
 						style={styles.date}
 						onChangeText={(text) => this.setState({futureFireDate: text})}
 						value={futureFireDate}
 					/>
-				</View>
-				<View style={styles.margin}>
-					<Button onPress={this.setAlarm} title="Set Alarm" color="#007fff" />
 				</View>
 				<View style={styles.margin}>
 					<Button
@@ -215,8 +247,8 @@ class App extends Component {
 				</View>
 				<View style={styles.margin}>
 					<Button
-						onPress={this.setRpeatAlarm}
-						title="Set Alarm with Repeat"
+						onPress={this.setFutureRpeatAlarm}
+						title="Set Future Alarm with Repeat"
 						color="#007fff"
 					/>
 				</View>
