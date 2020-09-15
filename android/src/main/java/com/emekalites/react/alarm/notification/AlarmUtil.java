@@ -166,6 +166,8 @@ class AlarmUtil {
     void snoozeAlarm(AlarmModel alarm) {
         Calendar calendar = getCalendarFromAlarm(alarm);
 
+        this.stopAlarmSound();
+
         // set snooze interval
         calendar.add(Calendar.MINUTE, alarm.getSnoozeInterval());
 
@@ -276,6 +278,8 @@ class AlarmUtil {
         alarmManager.cancel(alarmIntent);
 
         getAlarmDB().delete(alarm.getId());
+
+        this.stopAlarmSound();
 
         this.setBootReceiver();
     }
@@ -509,12 +513,16 @@ class AlarmUtil {
     }
 
     void stopAlarmSound() {
-        Log.e(TAG, "stop vibration and alarm sound");
-        Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-        if (vibrator.hasVibrator()) {
-            vibrator.cancel();
+        try {
+            Log.e(TAG, "stop vibration and alarm sound");
+            Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator.hasVibrator()) {
+                vibrator.cancel();
+            }
+            audioInterface.stopPlayer();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        audioInterface.stopPlayer();
     }
 
     ArrayList<AlarmModel> getAlarms() {

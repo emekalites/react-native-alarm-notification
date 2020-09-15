@@ -17,12 +17,12 @@ public class AlarmDismissReceiver extends BroadcastReceiver {
                 int notificationId = intent.getExtras().getInt(Constants.DISMISSED_NOTIFICATION_ID);
                 ANModule.getReactAppContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("OnNotificationDismissed", "{\"id\": \"" + notificationId + "\"}");
 
-                alarmUtil.stopAlarmSound();
                 alarmUtil.removeFiredNotification(notificationId);
 
                 alarmUtil.doCancelAlarm(notificationId);
             }
         } catch (Exception e) {
+            alarmUtil.stopAlarmSound();
             System.err.println("Exception when handling notification dismiss. " + e);
         }
     }
