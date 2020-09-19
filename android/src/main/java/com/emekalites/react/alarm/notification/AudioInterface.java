@@ -43,50 +43,15 @@ class AudioInterface {
 
     MediaPlayer getSingletonMedia(String soundName, String soundNames) {
         Log.e(TAG, "player: " + soundName + ", names: " + soundNames);
+        try {
         if (player == null) {
             player = new MediaPlayer();
-            player.setDataSource(url);
-            player.prepare(url);
+            player.setDataSource(soundName);
+            player.prepare();
         }
-            // List<Integer> resIds = new ArrayList<Integer>();
-            // if (soundNames != null && !soundNames.equals("")){
-            //     String[] names = soundNames.split(",");
-            //     for (String item : names) {
-            //         int _resId;
-            //         if (mContext.getResources().getIdentifier(item, "raw", mContext.getPackageName()) != 0) {
-            //             _resId = mContext.getResources().getIdentifier(item, "raw", mContext.getPackageName());
-            //         } else {
-            //             String _item = item.substring(0, item.lastIndexOf('.'));
-            //             _resId = mContext.getResources().getIdentifier(_item, "raw", mContext.getPackageName());
-            //         }
-
-            //         resIds.add(_resId);
-            //     }
-            // }
-
-            // int resId;
-            // Log.e(TAG, "is null");
-            // if (resIds.size() > 0) {
-            //     Random rand = new Random();
-            //     int n = rand.nextInt(resIds.size());
-
-            //     resId = resIds.get(n);
-
-            //     player = MediaPlayer.create(get(), resId);
-            // } else if (soundName != null && !soundName.equals("")) {
-            //     if (mContext.getResources().getIdentifier(soundName, "raw", mContext.getPackageName()) != 0) {
-            //         resId = mContext.getResources().getIdentifier(soundName, "raw", mContext.getPackageName());
-            //     } else {
-            //         soundName = soundName.substring(0, soundName.lastIndexOf('.'));
-            //         resId = mContext.getResources().getIdentifier(soundName, "raw", mContext.getPackageName());
-            //     }
-
-            //     player = MediaPlayer.create(get(), resId);
-            // } else {
-            //     player = MediaPlayer.create(get(), this.uri);
-            // }
-        // }
-
+        } catch (Exception e) {
+            Log.e(TAG, "Error while playing from source");
+        }
         return player;
     }
 
