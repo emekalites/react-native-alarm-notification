@@ -55,8 +55,8 @@ ReactNativeAN.scheduleAlarm = async (details) => {
 	const data = {
 		...details,
 		has_button: details.has_button || false,
-		vibrate: details.vibrate || true,
-		play_sound: details.play_sound || true,
+		vibrate: (typeof details.vibrate === 'undefined' ? true : details.vibrate),
+		play_sound: (typeof details.play_sound === 'undefined' ? true : details.play_sound),
 		schedule_type: details.schedule_type || 'once',
 		repeat_interval: details.repeat_interval || 'hourly',
 		interval_value: details.interval_value || 1,
@@ -73,8 +73,8 @@ ReactNativeAN.sendNotification = (details) => {
 	const data = {
 		...details,
 		has_button: false,
-		vibrate: details.vibrate || true,
-		play_sound: details.play_sound || true,
+		vibrate: (typeof details.vibrate === 'undefined' ? true : details.vibrate),
+		play_sound: (typeof details.play_sound === 'undefined' ? true : details.play_sound),
 		schedule_type: details.schedule_type || 'once',
 		volume: details.volume || 0.5,
 		sound_name: details.sound_name || '',
