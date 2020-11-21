@@ -50,7 +50,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkPermissions = exports.requestPermissions = exports.parseDate = exports.getScheduledAlarms = exports.removeAllFiredNotifications = exports.removeFiredNotification = exports.stopAlarmSound = exports.deleteRepeatingAlarm = exports.deleteAlarm = exports.sendNotification = exports.scheduleAlarm = void 0;
 var RNAlarmNotification_1 = __importDefault(require("./RNAlarmNotification"));
 var parseDateString = function (string) {
     var splits = string.split(' ');
@@ -64,136 +63,140 @@ var parseDateString = function (string) {
     var seconds = timeSplits[2];
     return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes), parseInt(seconds));
 };
-function scheduleAlarm(details) {
-    return __awaiter(this, void 0, void 0, function () {
-        var past, now, repeat_interval, interval_value;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!details.fire_date || (details.fire_date && details.fire_date === '')) {
-                        throw new Error('failed to schedule alarm because fire date is missing');
-                    }
-                    past = parseDateString(details.fire_date);
-                    now = new Date();
-                    if (past < now) {
-                        throw new Error('failed to schedule alarm because fire date is in the past');
-                    }
-                    repeat_interval = details.repeat_interval || 'hourly';
-                    interval_value = details.interval_value || 1;
-                    if (isNaN(interval_value)) {
-                        throw new Error('interval value should be a number');
-                    }
-                    if (repeat_interval === 'minutely' &&
-                        (interval_value < 1 || interval_value > 59)) {
-                        throw new Error('interval value should be between 1 and 59 minutes');
-                    }
-                    if (repeat_interval === 'hourly' &&
-                        (interval_value < 1 || interval_value > 23)) {
-                        throw new Error('interval value should be between 1 and 23 hours');
-                    }
-                    return [4, RNAlarmNotification_1.default.scheduleAlarm(__assign(__assign({}, details), { has_button: details.has_button || false, vibrate: (typeof details.vibrate === 'undefined' ? true : details.vibrate), play_sound: (typeof details.play_sound === 'undefined' ? true : details.play_sound), schedule_type: details.schedule_type || 'once', repeat_interval: repeat_interval,
-                            interval_value: interval_value, volume: details.volume || 0.5, sound_name: details.sound_name || '', snooze_interval: details.snooze_interval || 1, data: details.data || {} }))];
-                case 1: return [2, _a.sent()];
-            }
+var ReactNativeAN;
+(function (ReactNativeAN) {
+    function scheduleAlarm(details) {
+        return __awaiter(this, void 0, void 0, function () {
+            var past, now, repeat_interval, interval_value;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!details.fire_date || (details.fire_date && details.fire_date === '')) {
+                            throw new Error('failed to schedule alarm because fire date is missing');
+                        }
+                        past = parseDateString(details.fire_date);
+                        now = new Date();
+                        if (past < now) {
+                            throw new Error('failed to schedule alarm because fire date is in the past');
+                        }
+                        repeat_interval = details.repeat_interval || 'hourly';
+                        interval_value = details.interval_value || 1;
+                        if (isNaN(interval_value)) {
+                            throw new Error('interval value should be a number');
+                        }
+                        if (repeat_interval === 'minutely' &&
+                            (interval_value < 1 || interval_value > 59)) {
+                            throw new Error('interval value should be between 1 and 59 minutes');
+                        }
+                        if (repeat_interval === 'hourly' &&
+                            (interval_value < 1 || interval_value > 23)) {
+                            throw new Error('interval value should be between 1 and 23 hours');
+                        }
+                        return [4, RNAlarmNotification_1.default.scheduleAlarm(__assign(__assign({}, details), { has_button: details.has_button || false, vibrate: (typeof details.vibrate === 'undefined' ? true : details.vibrate), play_sound: (typeof details.play_sound === 'undefined' ? true : details.play_sound), schedule_type: details.schedule_type || 'once', repeat_interval: repeat_interval,
+                                interval_value: interval_value, volume: details.volume || 0.5, sound_name: details.sound_name || '', snooze_interval: details.snooze_interval || 1, data: details.data || {} }))];
+                    case 1: return [2, _a.sent()];
+                }
+            });
         });
-    });
-}
-exports.scheduleAlarm = scheduleAlarm;
-function sendNotification(details) {
-    RNAlarmNotification_1.default.sendNotification(__assign(__assign({}, details), { has_button: false, play_sound: (typeof details.play_sound === 'undefined' ? true : details.play_sound), volume: details.volume || 0.5, sound_name: details.sound_name || '', snooze_interval: details.snooze_interval || 1, data: details.data || {} }));
-}
-exports.sendNotification = sendNotification;
-function deleteAlarm(id) {
-    if (!id) {
-        throw new Error('id is required to delete alarm');
     }
-    RNAlarmNotification_1.default.deleteAlarm(id);
-}
-exports.deleteAlarm = deleteAlarm;
-function deleteRepeatingAlarm(id) {
-    if (!id) {
-        throw new Error('id is required to delete alarm');
+    ReactNativeAN.scheduleAlarm = scheduleAlarm;
+    function sendNotification(details) {
+        RNAlarmNotification_1.default.sendNotification(__assign(__assign({}, details), { has_button: false, play_sound: (typeof details.play_sound === 'undefined' ? true : details.play_sound), volume: details.volume || 0.5, sound_name: details.sound_name || '', snooze_interval: details.snooze_interval || 1, data: details.data || {} }));
     }
-    RNAlarmNotification_1.default.deleteRepeatingAlarm(id);
-}
-exports.deleteRepeatingAlarm = deleteRepeatingAlarm;
-function stopAlarmSound() {
-    return RNAlarmNotification_1.default.stopAlarmSound();
-}
-exports.stopAlarmSound = stopAlarmSound;
-function removeFiredNotification(id) {
-    if (!id) {
-        throw new Error('id is required to remove notification');
+    ReactNativeAN.sendNotification = sendNotification;
+    function deleteAlarm(id) {
+        if (!id) {
+            throw new Error('id is required to delete alarm');
+        }
+        RNAlarmNotification_1.default.deleteAlarm(id);
     }
-    RNAlarmNotification_1.default.removeFiredNotification(id);
-}
-exports.removeFiredNotification = removeFiredNotification;
-function removeAllFiredNotifications() {
-    RNAlarmNotification_1.default.removeAllFiredNotifications();
-}
-exports.removeAllFiredNotifications = removeAllFiredNotifications;
-function getScheduledAlarms() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, RNAlarmNotification_1.default.getScheduledAlarms()];
-                case 1: return [2, _a.sent()];
-            }
+    ReactNativeAN.deleteAlarm = deleteAlarm;
+    function deleteRepeatingAlarm(id) {
+        if (!id) {
+            throw new Error('id is required to delete alarm');
+        }
+        RNAlarmNotification_1.default.deleteRepeatingAlarm(id);
+    }
+    ReactNativeAN.deleteRepeatingAlarm = deleteRepeatingAlarm;
+    function stopAlarmSound() {
+        return RNAlarmNotification_1.default.stopAlarmSound();
+    }
+    ReactNativeAN.stopAlarmSound = stopAlarmSound;
+    function removeFiredNotification(id) {
+        if (!id) {
+            throw new Error('id is required to remove notification');
+        }
+        RNAlarmNotification_1.default.removeFiredNotification(id);
+    }
+    ReactNativeAN.removeFiredNotification = removeFiredNotification;
+    function removeAllFiredNotifications() {
+        RNAlarmNotification_1.default.removeAllFiredNotifications();
+    }
+    ReactNativeAN.removeAllFiredNotifications = removeAllFiredNotifications;
+    function getScheduledAlarms() {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, RNAlarmNotification_1.default.getScheduledAlarms()];
+                    case 1: return [2, _a.sent()];
+                }
+            });
         });
-    });
-}
-exports.getScheduledAlarms = getScheduledAlarms;
-function parseDate(rawDate) {
-    var hours;
-    var day;
-    var month;
-    if (rawDate.getHours().toString().length === 1) {
-        hours = "0" + rawDate.getHours();
     }
-    else {
-        hours = "" + rawDate.getHours();
+    ReactNativeAN.getScheduledAlarms = getScheduledAlarms;
+    function parseDate(rawDate) {
+        var hours;
+        var day;
+        var month;
+        if (rawDate.getHours().toString().length === 1) {
+            hours = "0" + rawDate.getHours();
+        }
+        else {
+            hours = "" + rawDate.getHours();
+        }
+        if (rawDate.getDate().toString().length === 1) {
+            day = "0" + rawDate.getDate();
+        }
+        else {
+            day = "" + rawDate.getDate();
+        }
+        if (rawDate.getMonth().toString().length === 1) {
+            month = "0" + (rawDate.getMonth() + 1);
+        }
+        else {
+            month = "" + (rawDate.getMonth() + 1);
+        }
+        return day + "-" + month + "-" + rawDate.getFullYear() + " " + hours + ":" + rawDate.getMinutes() + ":" + rawDate.getSeconds();
     }
-    if (rawDate.getDate().toString().length === 1) {
-        day = "0" + rawDate.getDate();
-    }
-    else {
-        day = "" + rawDate.getDate();
-    }
-    if (rawDate.getMonth().toString().length === 1) {
-        month = "0" + (rawDate.getMonth() + 1);
-    }
-    else {
-        month = "" + (rawDate.getMonth() + 1);
-    }
-    return day + "-" + month + "-" + rawDate.getFullYear() + " " + hours + ":" + rawDate.getMinutes() + ":" + rawDate.getSeconds();
-}
-exports.parseDate = parseDate;
-function requestPermissions(permissions) {
-    return __awaiter(this, void 0, void 0, function () {
-        var requestedPermissions;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    requestedPermissions = {
-                        alert: true,
-                        badge: true,
-                        sound: true,
-                    };
-                    if (permissions) {
+    ReactNativeAN.parseDate = parseDate;
+    function requestPermissions(permissions) {
+        return __awaiter(this, void 0, void 0, function () {
+            var requestedPermissions;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
                         requestedPermissions = {
-                            alert: !!permissions.alert,
-                            badge: !!permissions.badge,
-                            sound: !!permissions.sound,
+                            alert: true,
+                            badge: true,
+                            sound: true,
                         };
-                    }
-                    return [4, RNAlarmNotification_1.default.requestPermissions(requestedPermissions)];
-                case 1: return [2, _a.sent()];
-            }
+                        if (permissions) {
+                            requestedPermissions = {
+                                alert: !!permissions.alert,
+                                badge: !!permissions.badge,
+                                sound: !!permissions.sound,
+                            };
+                        }
+                        return [4, RNAlarmNotification_1.default.requestPermissions(requestedPermissions)];
+                    case 1: return [2, _a.sent()];
+                }
+            });
         });
-    });
-}
-exports.requestPermissions = requestPermissions;
-function checkPermissions(callback) {
-    RNAlarmNotification_1.default.checkPermissions(callback);
-}
-exports.checkPermissions = checkPermissions;
+    }
+    ReactNativeAN.requestPermissions = requestPermissions;
+    function checkPermissions(callback) {
+        RNAlarmNotification_1.default.checkPermissions(callback);
+    }
+    ReactNativeAN.checkPermissions = checkPermissions;
+})(ReactNativeAN || (ReactNativeAN = {}));
+exports.default = ReactNativeAN;
