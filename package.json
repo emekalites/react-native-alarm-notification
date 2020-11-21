@@ -3,11 +3,12 @@
   "title": "React Native Alarm Notification",
   "version": "1.7.1",
   "description": "schedule alarm with notification in react-native",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "README.md",
     "android",
-    "index.js",
+    "dist/index.js",
     "ios",
     "react-native-alarm-notification.podspec"
   ],
