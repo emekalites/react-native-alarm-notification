@@ -347,3 +347,7 @@ ReactNativeAN.requestPermissions({
 This module is customized to help with scheduling and sending notifications (local) in react-native. A couple of helpful features may be missing but hopefully they can be added as time goes on.
 
 NOTE: If you need a react-native module that takes care of Firebase Cloud Messaging, you could use [react-native-firebase](https://github.com/invertase/react-native-firebase)
+
+## Development
+
+[click here](./DEVELOPMENT.md) for information on how to contribute to the project with updates to typescript.
