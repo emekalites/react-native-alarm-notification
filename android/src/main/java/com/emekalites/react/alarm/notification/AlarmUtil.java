@@ -141,26 +141,23 @@ class AlarmUtil {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, 0);
         AlarmManager alarmManager = this.getAlarmManager();
 
-        String scheduleType = alarm.getScheduleType();
-
-        if (scheduleType.equals("once")) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-            }
-        } else if (scheduleType.equals("repeat")) {
-            long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
-
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
         } else {
-            Log.d(TAG, "Schedule type should either be once or repeat");
-            return;
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
         }
-
         this.setBootReceiver();
+    }
+
+    void setRepeatAlarm(AlarmModel alarm) {
+        Calendar calendar = getCalendarFromAlarm(alarm);
+        int inteval = getIntervalMinute(alarm.getInterval(), alarm.getIntervalValue());
+        calendar.add(Calendar.MINUTE, inteval);
+        setAlarmFromCalendar(alarm, calendar);
+        getAlarmDB().update(alarm);
+        setAlarm(alarm);
     }
 
     void snoozeAlarm(AlarmModel alarm) {
@@ -190,22 +187,12 @@ class AlarmUtil {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, 0);
         AlarmManager alarmManager = this.getAlarmManager();
 
-        String scheduleType = alarm.getScheduleType();
-
-        if (scheduleType.equals("once")) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-            }
-        } else if (scheduleType.equals("repeat")) {
-            long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
-
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
         } else {
-            Log.d(TAG, "Schedule type should either be once or repeat");
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
         }
     }
 
@@ -228,6 +215,27 @@ class AlarmUtil {
         }
 
         return duration * 60 * 1000;
+    }
+
+    int getIntervalMinute(String interval, int value) {
+        int duration = 1;
+
+        switch (interval) {
+            case "minutely":
+                duration = value;
+                break;
+            case "hourly":
+                duration = 60 * value;
+                break;
+            case "daily":
+                duration = 60 * 24;
+                break;
+            case "weekly":
+                duration = 60 * 24 * 7;
+                break;
+        }
+
+        return duration;
     }
 
     void doCancelAlarm(int id) {
@@ -383,7 +391,7 @@ class AlarmUtil {
 
             Intent intent = new Intent(mContext, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
+            intent.putExtra(Constants.NOTIFICATION_INTENT, true);
             Bundle bundle = new Bundle();
             if (alarm.getData() != null && !alarm.getData().equals("")) {
                 String[] datum = alarm.getData().split(";;");

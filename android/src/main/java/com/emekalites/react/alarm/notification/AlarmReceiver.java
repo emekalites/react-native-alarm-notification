@@ -30,12 +30,12 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                     try {
                         alarm = alarmDB.getAlarm(id);
-
+                        if (alarm.getScheduleType().equals("repeat")) {
+                            alarmUtil.setRepeatAlarm(alarm);
+                        }
                         alarmUtil.sendNotification(alarm);
-
                         ArrayList<AlarmModel> alarms = alarmDB.getAlarmList(1);
                         alarmUtil.setBootReceiver();
-
                         Log.d(TAG, "alarm start: " + alarm.toString() + ", alarms left: " + alarms.size());
                     } catch (Exception e) {
                         alarmUtil.stopAlarmSound();
