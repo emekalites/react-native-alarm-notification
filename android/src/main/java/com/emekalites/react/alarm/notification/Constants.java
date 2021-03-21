@@ -5,5 +5,5 @@ class Constants {
     static final String DISMISSED_NOTIFICATION_ID = "com.emekalites.react.alarm.notification.Constants.DISMISSED_NOTIFICATION_ID";
     static final String NOTIFICATION_ACTION_DISMISS = "ACTION_DISMISS";
     static final String NOTIFICATION_ACTION_SNOOZE = "ACTION_SNOOZE";
-    static final String NOTIFICATION_INTENT = "notification";
+    static final String NOTIFICATION_INTENT = "NOTIFICATION_INTENT";
 }
