@@ -24,6 +24,9 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
 
+/**
+ * @see src/RNAlarmNotification.ts when updating @ReactMethods.
+ */
 public class ANModule extends ReactContextBaseJavaModule {
     private final static String TAG = ANModule.class.getCanonicalName();
     private AlarmUtil alarmUtil;

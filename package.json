@@ -3,15 +3,17 @@
   "title": "React Native Alarm Notification",
   "version": "1.7.1",
   "description": "schedule alarm with notification in react-native",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "README.md",
     "android",
-    "index.js",
+    "dist/index.js",
     "ios",
     "react-native-alarm-notification.podspec"
   ],
   "scripts": {
+    "build": "./node_modules/.bin/tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -38,6 +40,7 @@
   },
   "devDependencies": {
     "react": "^16.9.0",
-    "react-native": "^0.61.5"
+    "react-native": "^0.61.5",
+    "typescript": ">=2 <=4.1"
   }
 }
