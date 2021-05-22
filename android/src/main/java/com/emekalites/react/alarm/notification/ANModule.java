@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Random;
 
 public class ANModule extends ReactContextBaseJavaModule {
     private final static String TAG = ANModule.class.getCanonicalName();
@@ -55,7 +56,8 @@ public class ANModule extends ReactContextBaseJavaModule {
 
         AlarmModel alarm = new AlarmModel();
 
-        long time = System.currentTimeMillis() / 1000;
+        Random r = new Random();
+        long time = System.currentTimeMillis() / 1000 + r.nextInt(1000) ;
 
         alarm.setAlarmId((int) time);
 
