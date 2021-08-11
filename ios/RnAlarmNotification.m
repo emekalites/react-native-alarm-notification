@@ -421,7 +421,7 @@ API_AVAILABLE(ios(10.0)) {
             
             UNCalendarNotificationTrigger* trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:newFireDate repeats:NO];
             
-            NSString *alarmId = [NSString stringWithFormat: @"%ld", (long) NSDate.date.timeIntervalSince1970];
+            NSString *alarmId = [[NSUUID UUID] UUIDString];
             
             NSString *soundName = [contentInfo.userInfo objectForKey:@"sound_name"];
             NSNumber *playSound = [contentInfo.userInfo objectForKey:@"sound"];
@@ -497,7 +497,7 @@ RCT_EXPORT_METHOD(scheduleAlarm: (NSDictionary *)details resolver:(RCTPromiseRes
             UNCalendarNotificationTrigger* trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:fireDate repeats:NO];
             
             // alarm id
-            NSString *alarmId = [NSString stringWithFormat: @"%ld", (long) NSDate.date.timeIntervalSince1970];
+            NSString *alarmId = [[NSUUID UUID] UUIDString];
             
             NSString *volume = [details[@"volume"] stringValue];
             
@@ -571,7 +571,7 @@ RCT_EXPORT_METHOD(sendNotification: (NSDictionary *)details) {
             }
             
             // alarm id
-            NSString *alarmId = [NSString stringWithFormat: @"%ld", (long) NSDate.date.timeIntervalSince1970];
+            NSString *alarmId = [[NSUUID UUID] UUIDString];
             
             NSString *volume = [details[@"volume"] stringValue];
             
