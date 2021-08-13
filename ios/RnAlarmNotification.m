@@ -421,7 +421,7 @@ API_AVAILABLE(ios(10.0)) {
             
             UNCalendarNotificationTrigger* trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:newFireDate repeats:NO];
             
-            NSString *alarmId = [NSString stringWithFormat: @"%ld", (long) NSDate.date.timeIntervalSince1970];
+            NSString *alarmId = [[NSUUID UUID] UUIDString];
             
             NSString *soundName = [contentInfo.userInfo objectForKey:@"sound_name"];
             NSNumber *playSound = [contentInfo.userInfo objectForKey:@"sound"];
@@ -497,7 +497,7 @@ RCT_EXPORT_METHOD(scheduleAlarm: (NSDictionary *)details resolver:(RCTPromiseRes
             UNCalendarNotificationTrigger* trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:fireDate repeats:NO];
             
             // alarm id
-            NSString *alarmId = [NSString stringWithFormat: @"%ld", (long) NSDate.date.timeIntervalSince1970];
+            NSString *alarmId = [[NSUUID UUID] UUIDString];
             
             NSString *volume = [details[@"volume"] stringValue];
             
@@ -557,7 +557,7 @@ RCT_EXPORT_METHOD(scheduleAlarm: (NSDictionary *)details resolver:(RCTPromiseRes
     }
 }
 
-RCT_EXPORT_METHOD(sendNotification: (NSDictionary *)details) {
+RCT_EXPORT_METHOD(sendNotification: (NSDictionary *)details resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
     @try {
         NSLog(@"send notification now");
         if (@available(iOS 10.0, *)) {
@@ -571,7 +571,7 @@ RCT_EXPORT_METHOD(sendNotification: (NSDictionary *)details) {
             }
             
             // alarm id
-            NSString *alarmId = [NSString stringWithFormat: @"%ld", (long) NSDate.date.timeIntervalSince1970];
+            NSString *alarmId = [[NSUUID UUID] UUIDString];
             
             NSString *volume = [details[@"volume"] stringValue];
             
@@ -604,58 +604,85 @@ RCT_EXPORT_METHOD(sendNotification: (NSDictionary *)details) {
         } else {
             // Fallback on earlier versions
         }
+        resolve(nil);
     } @catch(NSException *exception){
         NSLog(@"error: %@", exception.reason);
+        reject(exception.name, exception.reason, nil);
     }
 }
 
-RCT_EXPORT_METHOD(deleteAlarm: (NSInteger *)id){
-    NSLog(@"delete alarm: %li", (long) id);
-    if (@available(iOS 10.0, *)) {
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        NSArray *array = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%li", (long)id], nil];
-        [center removePendingNotificationRequestsWithIdentifiers:array];
-    } else {
-        // Fallback on earlier versions
+RCT_EXPORT_METHOD(deleteAlarm: (NSString *)alarmId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject){
+    NSLog(@"delete alarm: %@", alarmId);
+    @try {
+        if (@available(iOS 10.0, *)) {
+            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+            NSArray *array = [NSArray arrayWithObjects:alarmId, nil];
+            [center removePendingNotificationRequestsWithIdentifiers:array];
+        } else {
+            // Fallback on earlier versions
+        }
+        resolve(nil);
+    } @catch(NSException *exception){
+        NSLog(@"error: %@", exception.reason);
+        reject(exception.name, exception.reason, nil);
     }
 }
 
-RCT_EXPORT_METHOD(deleteRepeatingAlarm: (NSInteger *)id){
-    NSLog(@"delete alarm: %li", (long) id);
-    if (@available(iOS 10.0, *)) {
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        NSArray *array = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%li", (long)id], nil];
-        [center removePendingNotificationRequestsWithIdentifiers:array];
-    } else {
-        // Fallback on earlier versions
+RCT_EXPORT_METHOD(deleteRepeatingAlarm: (NSString *)alarmId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject){
+    NSLog(@"delete repeating alarm: %@", alarmId);
+    @try {
+        if (@available(iOS 10.0, *)) {
+            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+            NSArray *array = [NSArray arrayWithObjects:alarmId, nil];
+            [center removePendingNotificationRequestsWithIdentifiers:array];
+        } else {
+            // Fallback on earlier versions
+        }
+        resolve(nil);
+    } @catch(NSException *exception){
+        NSLog(@"error: %@", exception.reason);
+        reject(exception.name, exception.reason, nil);
     }
 }
 
-RCT_EXPORT_METHOD(stopAlarmSound){
+RCT_EXPORT_METHOD(stopAlarmSound:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject){
     NSLog(@"stop alarm sound");
     [RnAlarmNotification stopSound];
+    resolve(nil);
 }
 
-RCT_EXPORT_METHOD(removeFiredNotification: (NSInteger)id){
-    NSLog(@"remove fired notification: %li", (long) id);
-    if (@available(iOS 10.0, *)) {
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        NSArray *array = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%li", (long)id], nil];
-        [center removeDeliveredNotificationsWithIdentifiers:array];
-    } else {
-        // Fallback on earlier versions
+RCT_EXPORT_METHOD(removeFiredNotification: (NSString *)alarmId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject){
+    NSLog(@"remove fired notification: %@", alarmId);
+    @try {
+        if (@available(iOS 10.0, *)) {
+            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+            NSArray *array = [NSArray arrayWithObjects:alarmId, nil];
+            [center removeDeliveredNotificationsWithIdentifiers:array];
+        } else {
+            // Fallback on earlier versions
+        }
+        resolve(nil);
+    } @catch(NSException *exception){
+        NSLog(@"error: %@", exception.reason);
+        reject(exception.name, exception.reason, nil);
     }
 }
 
-RCT_EXPORT_METHOD(removeAllFiredNotifications){
+RCT_EXPORT_METHOD(removeAllFiredNotifications:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject){
     NSLog(@"remove all notifications");
-    if (@available(iOS 10.0, *)) {
-        if ([UNUserNotificationCenter class]) {
-            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-            [center removeAllDeliveredNotifications];
+    @try {
+        if (@available(iOS 10.0, *)) {
+            if ([UNUserNotificationCenter class]) {
+                UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+                [center removeAllDeliveredNotifications];
+            }
+        } else {
+            // Fallback on earlier versions
         }
-    } else {
-        // Fallback on earlier versions
+        resolve(nil);
+    } @catch(NSException *exception){
+        NSLog(@"error: %@", exception.reason);
+        reject(exception.name, exception.reason, nil);
     }
 }
 
@@ -684,7 +711,7 @@ RCT_EXPORT_METHOD(getScheduledAlarms: (RCTPromiseResolveBlock)resolve rejecter:(
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         
         [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
-            NSLog(@"count%lu",(unsigned long)requests.count);
+            NSLog(@"count %lu",(unsigned long)requests.count);
             
             NSMutableArray<NSDictionary *> *formattedNotifications = [NSMutableArray new];
             
