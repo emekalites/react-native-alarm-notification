@@ -102,28 +102,6 @@ class AlarmUtil {
         });
     }
 
-    boolean checkAlarm(ArrayList<AlarmModel> alarms, AlarmModel alarm) {
-        boolean contain = false;
-        for (AlarmModel aAlarm : alarms) {
-            if (aAlarm.getHour() == alarm.getHour()
-                    && aAlarm.getMinute() == alarm.getMinute()
-                    && aAlarm.getSecond() == alarm.getSecond()
-                    && aAlarm.getDay() == alarm.getDay()
-                    && aAlarm.getMonth() == alarm.getMonth()
-                    && aAlarm.getYear() == alarm.getYear()
-                    && aAlarm.getActive() == 1) {
-                contain = true;
-                break;
-            }
-        }
-
-        if (contain) {
-            Toast.makeText(mContext, "You have already set this Alarm", Toast.LENGTH_SHORT).show();
-        }
-
-        return contain;
-    }
-
     void setBootReceiver() {
         ArrayList<AlarmModel> alarms = getAlarmDB().getAlarmList(1);
         if (alarms.size() > 0) {

@@ -106,21 +106,15 @@ public class ANModule extends ReactContextBaseJavaModule {
 
             alarmUtil.setAlarmFromCalendar(alarm, calendar);
 
-            // check if alarm has been set at this time
-            boolean containAlarm = alarmUtil.checkAlarm(getAlarmDB().getAlarmList(1), alarm);
-            if (!containAlarm) {
-                int id = getAlarmDB().insert(alarm);
-                alarm.setId(id);
+            int id = getAlarmDB().insert(alarm);
+            alarm.setId(id);
 
-                alarmUtil.setAlarm(alarm);
+            alarmUtil.setAlarm(alarm);
 
-                WritableMap map = Arguments.createMap();
-                map.putInt("id", id);
+            WritableMap map = Arguments.createMap();
+            map.putInt("id", id);
 
-                promise.resolve(map);
-            } else {
-                promise.reject(E_SCHEDULE_ALARM_FAILED, "duplicate alarm set at date");
-            }
+            promise.resolve(map);
         } catch (Exception e) {
             e.printStackTrace();
             promise.reject(E_SCHEDULE_ALARM_FAILED, e);
