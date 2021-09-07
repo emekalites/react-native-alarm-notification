@@ -674,6 +674,7 @@ static NSDictionary *RCTFormatUNNotificationRequest(UNNotificationRequest *reque
     formattedNotification[@"hour"] = [NSString stringWithFormat:@"%li", (long)fireDate.hour];
     formattedNotification[@"minute"] =[NSString stringWithFormat:@"%li", (long)fireDate.minute];
     formattedNotification[@"second"] = [NSString stringWithFormat:@"%li", (long)fireDate.second];
+    formattedNotification[@"data"] = RCTNullIfNil([content.userInfo objectForKey:@"data"]);
 
     return formattedNotification;
 }
