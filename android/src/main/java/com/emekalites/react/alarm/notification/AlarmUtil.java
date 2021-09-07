@@ -385,15 +385,9 @@ class AlarmUtil {
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             Bundle bundle = new Bundle();
-            if (alarm.getData() != null && !alarm.getData().equals("")) {
-                String[] datum = alarm.getData().split(";;");
-                for (String item : datum) {
-                    String[] data = item.split("==>");
-                    bundle.putString(data[0], data[1]);
-                }
-
-                intent.putExtras(bundle);
-            }
+            bundle.putInt("id", alarm.getId());
+            bundle.putBundle("data", this.convertJsonToBundle(new JSONObject(alarm.getData())));
+            intent.putExtras(bundle);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -551,5 +545,44 @@ class AlarmUtil {
             }
         }
         return map;
+    }
+
+    Bundle convertJsonToBundle(JSONObject json) {
+        Bundle bundle = new Bundle();
+        try {
+            Iterator<String> iterator = json.keys();
+            while (iterator.hasNext()) {
+                String key = (String) iterator.next();
+                Object value = json.get(key);
+                switch (value.getClass().getSimpleName()) {
+                    case "String":
+                        bundle.putString(key, (String) value);
+                        break;
+                    case "Integer":
+                        bundle.putInt(key, (Integer) value);
+                        break;
+                    case "Long":
+                        bundle.putLong(key, (Long) value);
+                        break;
+                    case "Boolean":
+                        bundle.putBoolean(key, (Boolean) value);
+                        break;
+                    case "JSONObject":
+                        bundle.putBundle(key, convertJsonToBundle((JSONObject) value));
+                        break;
+                    case "Float":
+                        bundle.putFloat(key, (Float) value);
+                        break;
+                    case "Double":
+                        bundle.putDouble(key, (Double) value);
+                        break;
+                    default:
+                        bundle.putString(key, value.getClass().getSimpleName());
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return bundle;
     }
 }
