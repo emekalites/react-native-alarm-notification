@@ -154,6 +154,14 @@ class App extends Component {
 			},
 		);
 
+		if (Platform.OS === 'android') {
+			ReactNativeAN.getInitialNotification().then((data) => {
+				console.log(data);
+				const obj = JSON.parse(data);
+				console.log(`app opened by notification: ${obj.id}`);
+			});
+		}
+
 		// check ios permissions
 		if (Platform.OS === 'ios') {
 			this.showPermissions();

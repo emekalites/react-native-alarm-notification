@@ -552,4 +552,23 @@ class AlarmUtil {
         }
         return map;
     }
+
+    JSONObject convertBundleToJson(Bundle bundle) {
+        JSONObject json = new JSONObject();
+        try {
+            for (String key : bundle.keySet()) {
+                Object value = bundle.get(key);
+
+                if (value instanceof Bundle) {
+                    json.put(key, this.convertBundleToJson((Bundle) value));
+                    continue;
+                }
+
+                json.put(key, JSONObject.wrap(value));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
 }

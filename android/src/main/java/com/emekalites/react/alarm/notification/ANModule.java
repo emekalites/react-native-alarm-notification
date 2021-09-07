@@ -1,6 +1,8 @@
 package com.emekalites.react.alarm.notification;
 
 import android.app.Application;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.facebook.react.bridge.Arguments;
@@ -48,6 +50,20 @@ public class ANModule extends ReactContextBaseJavaModule {
 
     private AlarmDatabase getAlarmDB() {
         return new AlarmDatabase(mReactContext);
+    }
+
+    @ReactMethod
+    public void getInitialNotification(Promise promise) {
+        Activity activity = getCurrentActivity();
+        if (activity != null) {
+            Intent intent = activity.getIntent();
+            if (intent != null && intent.getExtras() != null) {
+                Bundle bundle = intent.getExtras();
+                JSONObject json = alarmUtil.convertBundleToJson(bundle);
+                promise.resolve(json.toString());
+            }
+        }
+        promise.resolve(null);
     }
 
     @ReactMethod
