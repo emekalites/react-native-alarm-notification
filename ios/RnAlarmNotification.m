@@ -497,7 +497,8 @@ RCT_EXPORT_METHOD(scheduleAlarm: (NSDictionary *)details resolver:(RCTPromiseRes
             UNCalendarNotificationTrigger* trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:fireDate repeats:NO];
             
             // alarm id
-            NSString *alarmId = [NSString stringWithFormat: @"%ld", (long) NSDate.date.timeIntervalSince1970];
+            NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+            NSString *alarmId = [NSString stringWithFormat: @"%ld", (long) [[gregorianCalendar dateFromComponents:fireDate] timeIntervalSince1970]];
             
             NSString *volume = [details[@"volume"] stringValue];
             
