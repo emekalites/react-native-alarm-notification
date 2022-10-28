@@ -44,6 +44,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 }
 
             } catch (Exception e) {
+                alarmUtil.stopAlarmSound();
                 e.printStackTrace();
             }
 
@@ -84,7 +85,12 @@ public class AlarmReceiver extends BroadcastReceiver {
                             e.printStackTrace();
                         }
                         break;
+                    default:
+                        alarmUtil.stopAlarmSound();
+                    break;
                 }
+            }else {
+                alarmUtil.stopAlarmSound();
             }
         }
     }
