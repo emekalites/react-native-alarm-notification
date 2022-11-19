@@ -22,9 +22,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (intent != null) {
             final AlarmDatabase alarmDB = new AlarmDatabase(context);
             AlarmUtil alarmUtil = new AlarmUtil((Application) context.getApplicationContext());
+            String intentType = "";
 
             try {
-                String intentType = intent.getExtras().getString("intentType");
+                intentType = intent.getExtras().getString("intentType");
                 if (Constants.ADD_INTENT.equals(intentType)) {
                     id = intent.getExtras().getInt("PendingId");
 
@@ -89,8 +90,10 @@ public class AlarmReceiver extends BroadcastReceiver {
                         alarmUtil.stopAlarmSound();
                     break;
                 }
-            }else {
-                alarmUtil.stopAlarmSound();
+            } else {
+                if (!Constants.ADD_INTENT.equals(intentType)) {
+                    alarmUtil.stopAlarmSound();
+                }
             }
         }
     }
