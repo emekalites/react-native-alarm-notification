@@ -46,12 +46,17 @@ class AlarmUtil {
     private Context mContext;
     private AudioInterface audioInterface;
     static final long[] DEFAULT_VIBRATE_PATTERN = {0, 250, 250, 250};
+    private int defaultFlags = 0;
 
     AlarmUtil(Application context) {
         mContext = context;
 
         audioInterface = AudioInterface.getInstance();
         audioInterface.init(mContext);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            defaultFlags = PendingIntent.FLAG_IMMUTABLE;
+        }
     }
 
     private Class getMainActivityClass() {
@@ -138,7 +143,7 @@ class AlarmUtil {
         intent.putExtra("intentType", ADD_INTENT);
         intent.putExtra("PendingId", alarm.getId());
 
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, defaultFlags);
         AlarmManager alarmManager = this.getAlarmManager();
 
         String scheduleType = alarm.getScheduleType();
@@ -187,7 +192,7 @@ class AlarmUtil {
         intent.putExtra("intentType", ADD_INTENT);
         intent.putExtra("PendingId", alarm.getId());
 
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, defaultFlags);
         AlarmManager alarmManager = this.getAlarmManager();
 
         String scheduleType = alarm.getScheduleType();
@@ -274,7 +279,7 @@ class AlarmUtil {
         int alarmId = alarm.getAlarmId();
 
         Intent intent = new Intent(mContext, AlarmReceiver.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, defaultFlags | PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(alarmIntent);
 
         getAlarmDB().delete(alarm.getId());
@@ -328,7 +333,7 @@ class AlarmUtil {
     private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
         Intent intent = new Intent(context, AlarmDismissReceiver.class);
         intent.putExtra(Constants.DISMISSED_NOTIFICATION_ID, notificationId);
-        return PendingIntent.getBroadcast(context.getApplicationContext(), notificationId, intent, 0);
+        return PendingIntent.getBroadcast(context.getApplicationContext(), notificationId, intent, defaultFlags);
     }
 
     void sendNotification(AlarmModel alarm) {
@@ -395,7 +400,7 @@ class AlarmUtil {
                 intent.putExtras(bundle);
             }
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent, defaultFlags | PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext, channelID)
                     .setSmallIcon(smallIconResId)
@@ -457,14 +462,14 @@ class AlarmUtil {
                 Intent dismissIntent = new Intent(mContext, AlarmReceiver.class);
                 dismissIntent.setAction(NOTIFICATION_ACTION_DISMISS);
                 dismissIntent.putExtra("AlarmId", alarm.getId());
-                PendingIntent pendingDismiss = PendingIntent.getBroadcast(mContext, notificationID, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingDismiss = PendingIntent.getBroadcast(mContext, notificationID, dismissIntent, defaultFlags | PendingIntent.FLAG_UPDATE_CURRENT);
                 NotificationCompat.Action dismissAction = new NotificationCompat.Action(android.R.drawable.ic_lock_idle_alarm, "DISMISS", pendingDismiss);
                 mBuilder.addAction(dismissAction);
 
                 Intent snoozeIntent = new Intent(mContext, AlarmReceiver.class);
                 snoozeIntent.setAction(NOTIFICATION_ACTION_SNOOZE);
                 snoozeIntent.putExtra("SnoozeAlarmId", alarm.getId());
-                PendingIntent pendingSnooze = PendingIntent.getBroadcast(mContext, notificationID, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingSnooze = PendingIntent.getBroadcast(mContext, notificationID, snoozeIntent, defaultFlags | PendingIntent.FLAG_UPDATE_CURRENT);
                 NotificationCompat.Action snoozeAction = new NotificationCompat.Action(R.drawable.ic_snooze, "SNOOZE", pendingSnooze);
                 mBuilder.addAction(snoozeAction);
             }
