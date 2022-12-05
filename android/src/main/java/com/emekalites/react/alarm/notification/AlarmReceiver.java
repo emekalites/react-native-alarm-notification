@@ -81,6 +81,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                             alarmUtil.removeFiredNotification(alarm.getId());
                             
                             alarmUtil.cancelAlarm(alarm, false);
+
+                            alarmUtil.repeatAlarm(alarm);
                         } catch (Exception e) {
                             alarmUtil.stopAlarmSound();
                             e.printStackTrace();

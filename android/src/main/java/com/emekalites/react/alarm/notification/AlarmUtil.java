@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.time.LocalDateTime;
 
 import static com.emekalites.react.alarm.notification.Constants.ADD_INTENT;
 import static com.emekalites.react.alarm.notification.Constants.NOTIFICATION_ACTION_DISMISS;
@@ -146,9 +147,9 @@ class AlarmUtil {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, defaultFlags);
         AlarmManager alarmManager = this.getAlarmManager();
 
-        String scheduleType = alarm.getScheduleType();
+        // String scheduleType = alarm.getScheduleType();
 
-        if (scheduleType.equals("once")) {
+        // if (scheduleType.equals("once")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -156,14 +157,14 @@ class AlarmUtil {
             } else {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             }
-        } else if (scheduleType.equals("repeat")) {
-            long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
+        // } else if (scheduleType.equals("repeat")) {
+        //     long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
-        } else {
-            Log.d(TAG, "Schedule type should either be once or repeat");
-            return;
-        }
+        //     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
+        // } else {
+        //     Log.d(TAG, "Schedule type should either be once or repeat");
+        //     return;
+        // }
 
         this.setBootReceiver();
     }
@@ -195,9 +196,9 @@ class AlarmUtil {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, defaultFlags);
         AlarmManager alarmManager = this.getAlarmManager();
 
-        String scheduleType = alarm.getScheduleType();
+        // String scheduleType = alarm.getScheduleType();
 
-        if (scheduleType.equals("once")) {
+        // if (scheduleType.equals("once")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -205,12 +206,39 @@ class AlarmUtil {
             } else {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             }
-        } else if (scheduleType.equals("repeat")) {
-            long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
+        // } else if (scheduleType.equals("repeat")) {
+        //     long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
-        } else {
-            Log.d(TAG, "Schedule type should either be once or repeat");
+        //     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
+        // } else {
+        //     Log.d(TAG, "Schedule type should either be once or repeat");
+        // }
+    }
+
+    void repeatAlarm(AlarmModel alarm) {
+        String scheduleType = alarm.getScheduleType();
+
+        if(scheduleType.equals("repeat")){
+            getAlarmDB().delete(alarm.getId());
+
+            LocalDateTime oldDate = LocalDateTime.of(alarm.getYear(), alarm.getMonth(), alarm.getDay(),alarm.getHour(), alarm.getMinute());
+            LocalDateTime nextDate = oldDate.plusDays(1);
+
+            alarm.setYear(nextDate.getYear());
+            alarm.setDay(nextDate.getDayOfMonth());
+            alarm.setMonth(nextDate.getMonthValue());
+
+            boolean containAlarm = this.checkAlarm(getAlarmDB().getAlarmList(1), alarm);
+
+            if (!containAlarm) {
+                try {
+                    int id = getAlarmDB().insert(alarm);
+                    alarm.setId(id);
+                    this.setAlarm(alarm);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
