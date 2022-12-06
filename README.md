@@ -4,7 +4,7 @@
 [![npm downloads](https://img.shields.io/npm/dt/react-native-alarm-notification.svg)](https://badge.fury.io/js/react-native-alarm-notification)
 
 
-## ***** Contributors Needed as I am too busy to manage the issues and add new versions *****
+## ***** Maintaner/Collaborator Needed as I am too busy to manage the issues and add new versions *****
 
 
 ## Installing (React Native >= 0.60.0)
