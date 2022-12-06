@@ -22,9 +22,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (intent != null) {
             final AlarmDatabase alarmDB = new AlarmDatabase(context);
             AlarmUtil alarmUtil = new AlarmUtil((Application) context.getApplicationContext());
+            String intentType = "";
 
             try {
-                String intentType = intent.getExtras().getString("intentType");
+                intentType = intent.getExtras().getString("intentType");
                 if (Constants.ADD_INTENT.equals(intentType)) {
                     id = intent.getExtras().getInt("PendingId");
 
@@ -44,6 +45,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 }
 
             } catch (Exception e) {
+                alarmUtil.stopAlarmSound();
                 e.printStackTrace();
             }
 
@@ -79,11 +81,20 @@ public class AlarmReceiver extends BroadcastReceiver {
                             alarmUtil.removeFiredNotification(alarm.getId());
                             
                             alarmUtil.cancelAlarm(alarm, false);
+
+                            alarmUtil.repeatAlarm(alarm);
                         } catch (Exception e) {
                             alarmUtil.stopAlarmSound();
                             e.printStackTrace();
                         }
                         break;
+                    default:
+                        alarmUtil.stopAlarmSound();
+                    break;
+                }
+            } else {
+                if (!Constants.ADD_INTENT.equals(intentType)) {
+                    alarmUtil.stopAlarmSound();
                 }
             }
         }
