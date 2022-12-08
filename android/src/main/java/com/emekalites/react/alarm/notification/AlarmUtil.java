@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.time.LocalDateTime;
 
 import static com.emekalites.react.alarm.notification.Constants.ADD_INTENT;
 import static com.emekalites.react.alarm.notification.Constants.NOTIFICATION_ACTION_DISMISS;
@@ -47,17 +46,12 @@ class AlarmUtil {
     private Context mContext;
     private AudioInterface audioInterface;
     static final long[] DEFAULT_VIBRATE_PATTERN = {0, 250, 250, 250};
-    private int defaultFlags = 0;
 
     AlarmUtil(Application context) {
         mContext = context;
 
         audioInterface = AudioInterface.getInstance();
         audioInterface.init(mContext);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            defaultFlags = PendingIntent.FLAG_IMMUTABLE;
-        }
     }
 
     private Class getMainActivityClass() {
@@ -144,12 +138,12 @@ class AlarmUtil {
         intent.putExtra("intentType", ADD_INTENT);
         intent.putExtra("PendingId", alarm.getId());
 
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, defaultFlags);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, 0);
         AlarmManager alarmManager = this.getAlarmManager();
 
-        // String scheduleType = alarm.getScheduleType();
+        String scheduleType = alarm.getScheduleType();
 
-        // if (scheduleType.equals("once")) {
+        if (scheduleType.equals("once")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -157,14 +151,14 @@ class AlarmUtil {
             } else {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             }
-        // } else if (scheduleType.equals("repeat")) {
-        //     long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
+        } else if (scheduleType.equals("repeat")) {
+            long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
 
-        //     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
-        // } else {
-        //     Log.d(TAG, "Schedule type should either be once or repeat");
-        //     return;
-        // }
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
+        } else {
+            Log.d(TAG, "Schedule type should either be once or repeat");
+            return;
+        }
 
         this.setBootReceiver();
     }
@@ -193,12 +187,12 @@ class AlarmUtil {
         intent.putExtra("intentType", ADD_INTENT);
         intent.putExtra("PendingId", alarm.getId());
 
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, defaultFlags);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, 0);
         AlarmManager alarmManager = this.getAlarmManager();
 
-        // String scheduleType = alarm.getScheduleType();
+        String scheduleType = alarm.getScheduleType();
 
-        // if (scheduleType.equals("once")) {
+        if (scheduleType.equals("once")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -206,39 +200,12 @@ class AlarmUtil {
             } else {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
             }
-        // } else if (scheduleType.equals("repeat")) {
-        //     long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
+        } else if (scheduleType.equals("repeat")) {
+            long interval = this.getInterval(alarm.getInterval(), alarm.getIntervalValue());
 
-        //     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
-        // } else {
-        //     Log.d(TAG, "Schedule type should either be once or repeat");
-        // }
-    }
-
-    void repeatAlarm(AlarmModel alarm) {
-        String scheduleType = alarm.getScheduleType();
-
-        if(scheduleType.equals("repeat")){
-            getAlarmDB().delete(alarm.getId());
-
-            LocalDateTime oldDate = LocalDateTime.of(alarm.getYear(), alarm.getMonth(), alarm.getDay(),alarm.getHour(), alarm.getMinute());
-            LocalDateTime nextDate = oldDate.plusDays(1);
-
-            alarm.setYear(nextDate.getYear());
-            alarm.setDay(nextDate.getDayOfMonth());
-            alarm.setMonth(nextDate.getMonthValue());
-
-            boolean containAlarm = this.checkAlarm(getAlarmDB().getAlarmList(1), alarm);
-
-            if (!containAlarm) {
-                try {
-                    int id = getAlarmDB().insert(alarm);
-                    alarm.setId(id);
-                    this.setAlarm(alarm);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval, alarmIntent);
+        } else {
+            Log.d(TAG, "Schedule type should either be once or repeat");
         }
     }
 
@@ -307,7 +274,7 @@ class AlarmUtil {
         int alarmId = alarm.getAlarmId();
 
         Intent intent = new Intent(mContext, AlarmReceiver.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, defaultFlags | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(alarmIntent);
 
         getAlarmDB().delete(alarm.getId());
@@ -361,7 +328,7 @@ class AlarmUtil {
     private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
         Intent intent = new Intent(context, AlarmDismissReceiver.class);
         intent.putExtra(Constants.DISMISSED_NOTIFICATION_ID, notificationId);
-        return PendingIntent.getBroadcast(context.getApplicationContext(), notificationId, intent, defaultFlags);
+        return PendingIntent.getBroadcast(context.getApplicationContext(), notificationId, intent, 0);
     }
 
     void sendNotification(AlarmModel alarm) {
@@ -428,7 +395,7 @@ class AlarmUtil {
                 intent.putExtras(bundle);
             }
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent, defaultFlags | PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext, channelID)
                     .setSmallIcon(smallIconResId)
@@ -490,14 +457,14 @@ class AlarmUtil {
                 Intent dismissIntent = new Intent(mContext, AlarmReceiver.class);
                 dismissIntent.setAction(NOTIFICATION_ACTION_DISMISS);
                 dismissIntent.putExtra("AlarmId", alarm.getId());
-                PendingIntent pendingDismiss = PendingIntent.getBroadcast(mContext, notificationID, dismissIntent, defaultFlags | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingDismiss = PendingIntent.getBroadcast(mContext, notificationID, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 NotificationCompat.Action dismissAction = new NotificationCompat.Action(android.R.drawable.ic_lock_idle_alarm, "DISMISS", pendingDismiss);
                 mBuilder.addAction(dismissAction);
 
                 Intent snoozeIntent = new Intent(mContext, AlarmReceiver.class);
                 snoozeIntent.setAction(NOTIFICATION_ACTION_SNOOZE);
                 snoozeIntent.putExtra("SnoozeAlarmId", alarm.getId());
-                PendingIntent pendingSnooze = PendingIntent.getBroadcast(mContext, notificationID, snoozeIntent, defaultFlags | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingSnooze = PendingIntent.getBroadcast(mContext, notificationID, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 NotificationCompat.Action snoozeAction = new NotificationCompat.Action(R.drawable.ic_snooze, "SNOOZE", pendingSnooze);
                 mBuilder.addAction(snoozeAction);
             }
