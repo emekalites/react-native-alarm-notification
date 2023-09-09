@@ -19,6 +19,8 @@ public class AlarmDismissReceiver extends BroadcastReceiver {
                 alarmUtil.removeFiredNotification(notificationId);
 
                 alarmUtil.doCancelAlarm(notificationId);
+
+                alarmUtil.stopAlarmSound();
             }
         } catch (Exception e) {
             alarmUtil.stopAlarmSound();
