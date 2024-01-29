@@ -45,7 +45,7 @@ class AlarmUtil {
 
     private Context mContext;
     private AudioInterface audioInterface;
-    static final long[] DEFAULT_VIBRATE_PATTERN = {0, 250, 250, 250};
+    static final long[] DEFAULT_VIBRATE_PATTERN = { 0, 250, 250, 250 };
 
     AlarmUtil(Application context) {
         mContext = context;
@@ -105,7 +105,9 @@ class AlarmUtil {
     boolean checkAlarm(ArrayList<AlarmModel> alarms, AlarmModel alarm) {
         boolean contain = false;
         for (AlarmModel aAlarm : alarms) {
-            if (aAlarm.getHour() == alarm.getHour() && aAlarm.getMinute() == alarm.getMinute() && aAlarm.getDay() == alarm.getDay() && aAlarm.getMonth() == alarm.getMonth() && aAlarm.getYear() == alarm.getYear() && aAlarm.getActive() == 1) {
+            if (aAlarm.getHour() == alarm.getHour() && aAlarm.getMinute() == alarm.getMinute()
+                    && aAlarm.getDay() == alarm.getDay() && aAlarm.getMonth() == alarm.getMonth()
+                    && aAlarm.getYear() == alarm.getYear() && aAlarm.getActive() == 1) {
                 contain = true;
                 break;
             }
@@ -138,7 +140,7 @@ class AlarmUtil {
         intent.putExtra("intentType", ADD_INTENT);
         intent.putExtra("PendingId", alarm.getId());
 
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_MUTABLE);
         AlarmManager alarmManager = this.getAlarmManager();
 
         String scheduleType = alarm.getScheduleType();
@@ -187,7 +189,7 @@ class AlarmUtil {
         intent.putExtra("intentType", ADD_INTENT);
         intent.putExtra("PendingId", alarm.getId());
 
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_MUTABLE);
         AlarmManager alarmManager = this.getAlarmManager();
 
         String scheduleType = alarm.getScheduleType();
@@ -274,7 +276,8 @@ class AlarmUtil {
         int alarmId = alarm.getAlarmId();
 
         Intent intent = new Intent(mContext, AlarmReceiver.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, alarmId, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(alarmIntent);
 
         getAlarmDB().delete(alarm.getId());
@@ -328,7 +331,8 @@ class AlarmUtil {
     private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
         Intent intent = new Intent(context, AlarmDismissReceiver.class);
         intent.putExtra(Constants.DISMISSED_NOTIFICATION_ID, notificationId);
-        return PendingIntent.getBroadcast(context.getApplicationContext(), notificationId, intent, 0);
+        return PendingIntent.getBroadcast(context.getApplicationContext(), notificationId, intent,
+                PendingIntent.FLAG_MUTABLE);
     }
 
     void sendNotification(AlarmModel alarm) {
@@ -342,7 +346,8 @@ class AlarmUtil {
 
             boolean playSound = alarm.isPlaySound();
             if (playSound) {
-                this.playAlarmSound(alarm.getSoundName(), alarm.getSoundNames(), alarm.isLoopSound(), alarm.getVolume());
+                this.playAlarmSound(alarm.getSoundName(), alarm.getSoundNames(), alarm.isLoopSound(),
+                        alarm.getVolume());
             }
 
             NotificationManager mNotificationManager = getNotificationManager();
@@ -372,7 +377,7 @@ class AlarmUtil {
             Resources res = mContext.getResources();
             String packageName = mContext.getPackageName();
 
-            //icon
+            // icon
             int smallIconResId;
             String smallIcon = alarm.getSmallIcon();
             if (smallIcon != null && !smallIcon.equals("")) {
@@ -395,7 +400,8 @@ class AlarmUtil {
                 intent.putExtras(bundle);
             }
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, notificationID, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext, channelID)
                     .setSmallIcon(smallIconResId)
@@ -411,10 +417,12 @@ class AlarmUtil {
 
             long vibration = (long) alarm.getVibration();
 
-            long[] vibrationPattern = vibration == 0 ? DEFAULT_VIBRATE_PATTERN : new long[]{0, vibration, 1000, vibration};
+            long[] vibrationPattern = vibration == 0 ? DEFAULT_VIBRATE_PATTERN
+                    : new long[] { 0, vibration, 1000, vibration };
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel mChannel = new NotificationChannel(channelID, "Alarm Notify", NotificationManager.IMPORTANCE_HIGH);
+                NotificationChannel mChannel = new NotificationChannel(channelID, "Alarm Notify",
+                        NotificationManager.IMPORTANCE_HIGH);
                 mChannel.enableLights(true);
 
                 String color = alarm.getColor();
@@ -422,7 +430,7 @@ class AlarmUtil {
                     mChannel.setLightColor(Color.parseColor(color));
                 }
 
-                if(!mChannel.canBypassDnd()){
+                if (!mChannel.canBypassDnd()) {
                     mChannel.setBypassDnd(alarm.isBypassDnd());
                 }
 
@@ -443,7 +451,7 @@ class AlarmUtil {
                 mBuilder.setVibrate(alarm.isVibrate() ? vibrationPattern : null);
             }
 
-            //color
+            // color
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 String color = alarm.getColor();
                 if (color != null && !color.equals("")) {
@@ -457,24 +465,28 @@ class AlarmUtil {
                 Intent dismissIntent = new Intent(mContext, AlarmReceiver.class);
                 dismissIntent.setAction(NOTIFICATION_ACTION_DISMISS);
                 dismissIntent.putExtra("AlarmId", alarm.getId());
-                PendingIntent pendingDismiss = PendingIntent.getBroadcast(mContext, notificationID, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                NotificationCompat.Action dismissAction = new NotificationCompat.Action(android.R.drawable.ic_lock_idle_alarm, "DISMISS", pendingDismiss);
+                PendingIntent pendingDismiss = PendingIntent.getBroadcast(mContext, notificationID, dismissIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+                NotificationCompat.Action dismissAction = new NotificationCompat.Action(
+                        android.R.drawable.ic_lock_idle_alarm, "DISMISS", pendingDismiss);
                 mBuilder.addAction(dismissAction);
 
                 Intent snoozeIntent = new Intent(mContext, AlarmReceiver.class);
                 snoozeIntent.setAction(NOTIFICATION_ACTION_SNOOZE);
                 snoozeIntent.putExtra("SnoozeAlarmId", alarm.getId());
-                PendingIntent pendingSnooze = PendingIntent.getBroadcast(mContext, notificationID, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                NotificationCompat.Action snoozeAction = new NotificationCompat.Action(R.drawable.ic_snooze, "SNOOZE", pendingSnooze);
+                PendingIntent pendingSnooze = PendingIntent.getBroadcast(mContext, notificationID, snoozeIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+                NotificationCompat.Action snoozeAction = new NotificationCompat.Action(R.drawable.ic_snooze, "SNOOZE",
+                        pendingSnooze);
                 mBuilder.addAction(snoozeAction);
             }
 
-            //use big text
+            // use big text
             if (alarm.isUseBigText()) {
                 mBuilder = mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
             }
 
-            //large icon
+            // large icon
             String largeIcon = alarm.getLargeIcon();
             if (largeIcon != null && !largeIcon.equals("") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 int largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
